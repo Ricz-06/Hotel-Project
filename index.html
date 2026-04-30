@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hotel Sistema</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>🏨 Hotel Sistema - Recepción</h1>
+
+<hr>
+
+<!-- 📊 ESTADO -->
+<div class="panel">
+    <h2>📊 Estado del Hotel</h2>
+    <p>🟢 Libres: <span id="libres">0</span></p>
+    <p>🔴 Ocupadas: <span id="ocupadas">0</span></p>
+</div>
+
+<div class="panel">
+    <h2>⚠️ Administración</h2>
+    <button onclick="resetearSistema()" class="danger">
+        🗑 Resetear Sistema
+    </button>
+</div>
+
+<!-- 🎛 FILTROS -->
+<div class="panel">
+    <h2>🎛 Filtros</h2>
+    <button onclick="filtrar('todas')">Todas</button>
+    <button onclick="filtrar('libre')">Libres</button>
+    <button onclick="filtrar('ocupada')">Ocuppadas</button>
+</div>
+
+<hr>
+
+
+<!-- 👤 CLIENTES -->
+<div class="panel">
+    <h2>👤 Clientes</h2>
+
+    <input id="nombre" placeholder="Nombre cliente">
+    
+    <select id="tipo">
+        <option value="VIP">VIP</option>
+        <option value="Normal">Normal</option>
+    </select>
+
+    <br><br>
+
+    <button onclick="crearCliente()">Crear Cliente</button>
+    <button onclick="verClientes()">Actualizar Lista</button>
+
+    <!-- 🔥 TABLA PRO -->
+    <div class="panel">
+        <h3>📋 Lista de clientes</h3>
+
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Cambiar Tipo</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody id="listaClientes"></tbody>
+        </table>
+    </div>
+</div>
+
+<hr>
+
+<!-- 🛏 HABITACIONES -->
+<div class="panel">
+    <h2>🛏 Habitaciones</h2>
+
+    <input id="numero" placeholder="Número habitación">
+    <input id="tipoHab" placeholder="Tipo (VIP o Normal)">
+
+    <br><br>
+
+    <input id="clienteAsignado" placeholder="ID cliente">
+
+    <br><br>
+
+    <button onclick="crearHabitacion()">Crear</button>
+    <button onclick="verHabitaciones()">Actualizar</button>
+
+    <div class="container" id="habitaciones"></div>
+</div>
+
+<!-- 🔥 CONEXIÓN JS -->
+<script src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,175 @@
+body {
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.panel {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    padding: 8px 12px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.card {
+    width: 200px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #1e293b;
+}
+
+.ocupada {
+    border-left: 6px solid red;
+}
+
+.libre {
+    border-left: 6px solid green;
+}
+button {
+    background: #2563eb;
+    color: white;
+}
+
+button:nth-child(2) {
+    background: green;
+}
+
+button:nth-child(3) {
+    background: orange;
+}
+
+button:nth-child(4) {
+    background: red;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #000;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tabla th, .tabla td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #334155;
+}
+
+.tabla th {
+    background: #0f172a;
+}
+
+.vip {
+    background: green;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.normal {
+    background: gray;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tabla th, .tabla td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #334155;
+}
+
+.tabla th {
+    background: #0f172a;
+}
+
+.vip {
+    background: #16a34a;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.normal {
+    background: #64748b;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* 🔥 BOTONES PRO */
+button {
+    background: #2563eb;
+    color: white;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* botones VIP / NORMAL */
+button:nth-child(1) {
+    background: #16a34a;
+}
+
+button:nth-child(2) {
+    background: #475569;
+}
+
+button:last-child {
+    background: #dc2626;
+}
+.danger {
+    background: red;
+    color: white;
+}
