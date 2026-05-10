@@ -1,15 +1,23 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db'); // 🔥 IMPORTANTE (para usar la BD)
-const authRoutes = require('./routes/auth');
-app.use('/auth', authRoutes);
+const db = require('./db');
+
+/* =========================================================
+   🟢 CREAR APP (PRIMERO SIEMPRE)
+   ========================================================= */
 const app = express();
 
 /* =========================================================
-   🟢 MIDDLEWARES (OBLIGATORIO)
+   🟢 MIDDLEWARES
    ========================================================= */
 app.use(cors());
 app.use(express.json());
+
+/* =========================================================
+   🟢 RUTAS AUTH
+   ========================================================= */
+const authRoutes = require('./routes/auth');
+app.use('/auth', authRoutes);
 
 /* =========================================================
    🟢 RUTA PRINCIPAL

@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 
-/* 🔥 CONEXIÓN A BASE DE DATOS */
+
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -18,5 +18,5 @@ connection.connect((err) => {
     console.log('✅ MySQL conectado correctamente');
 });
 
-/* 🔥 EXPORTAR */
+
 module.exports = connection;

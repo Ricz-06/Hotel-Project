@@ -3,6 +3,9 @@ function verHabitaciones() {
     .then(res => res.json())
     .then(data => {
 
+        // 🔥 guardar global
+        habitacionesGlobal = data;
+
         let html = "";
 
         data.forEach(h => {
@@ -11,20 +14,22 @@ function verHabitaciones() {
 
             html += `
                 <div class="card ${estadoClass}">
-                    <h3>Habitación ${h.numero}</h3>
-                    <p><b>Tipo:</b> ${h.tipo}</p>
-                    <p><b>Estado:</b> ${h.estado}</p>
-                    <p><b>Cliente:</b> ${h.cliente || "Nadie"}</p>
+                    <h3>🛏 ${h.numero}</h3>
+                    <p>Tipo: ${h.tipo}</p>
+                    <p>Estado: ${h.estado}</p>
+                    <p>👤 ${h.cliente || "Libre"}</p>
 
-                    <!-- 🗑 BOTÓN DELETE POR FILA -->
-                    <button onclick="eliminarHabitacion(${h.numero})">
-                        🗑 Eliminar
-                    </button>
+                    <button onclick="ocuparHabitacion(${h.numero})">Ocupar</button>
+                    <button onclick="liberarHabitacion(${h.numero})">Liberar</button>
+                    <button onclick="eliminarHabitacion(${h.id})">Eliminar</button>
                 </div>
             `;
         });
 
-        document.getElementById("resultadoHabitaciones").innerHTML = html;
-    });
+        // 🔥 CORREGIDO ID
+        document.getElementById("habitaciones").innerHTML = html;
 
+        // 🔥 CONTADORES
+        actualizarContadores(data);
+    });
 }

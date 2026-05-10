@@ -5,8 +5,8 @@ let habitacionesGlobal = [];
 
 /* ================= CLIENTES ================= */
 
-// 🔥 FALTABA ESTA FUNCIÓN
 function crearCliente() {
+
     const nombre = document.getElementById("nombre").value;
     const tipo = document.getElementById("tipo").value;
 
@@ -26,12 +26,19 @@ function crearCliente() {
         })
     })
     .then(() => {
+
         alert("Cliente creado");
+
+        document.getElementById("nombre").value = "";
+
         verClientes();
     });
 }
 
+/* ================= VER CLIENTES ================= */
+
 function verClientes() {
+
     fetch(URL + "/clientes")
     .then(res => res.json())
     .then(data => {
@@ -40,22 +47,53 @@ function verClientes() {
 
         data.forEach(c => {
 
-            let color = c.tipo === "VIP" ? "vip" : "normal";
+            let color =
+                c.tipo === "VIP"
+                ? "vip"
+                : "normal";
 
             html += `
                 <tr>
+
                     <td>${c.id}</td>
+
                     <td>${c.nombre}</td>
-                    <td><span class="${color}">${c.tipo}</span></td>
 
                     <td>
-                        <button onclick="cambiarTipo(${c.id}, 'VIP')">VIP</button>
-                        <button onclick="cambiarTipo(${c.id}, 'Normal')">Normal</button>
+                        <span class="${color}">
+                            ${c.tipo}
+                        </span>
                     </td>
 
                     <td>
-                        <button onclick="eliminarCliente(${c.id})">🗑</button>
+
+                        <button
+                            class="vip-btn"
+                            onclick="cambiarTipo(${c.id}, 'VIP')"
+                        >
+                            VIP
+                        </button>
+
+                        <button
+                            class="normal-btn"
+                            onclick="cambiarTipo(${c.id}, 'Normal')"
+                        >
+                            Normal
+                        </button>
+
                     </td>
+
+                    <td>
+
+                        <button
+                            class="delete-btn"
+                            onclick="eliminarCliente(${c.id})"
+                        >
+                            🗑
+                        </button>
+
+                    </td>
+
                 </tr>
             `;
         });
@@ -64,6 +102,7 @@ function verClientes() {
     });
 }
 
+/* ================= CAMBIAR TIPO ================= */
 
 function cambiarTipo(id, nuevoTipo) {
 
@@ -82,31 +121,63 @@ function cambiarTipo(id, nuevoTipo) {
     });
 }
 
+/* ================= ELIMINAR CLIENTE ================= */
+
+function eliminarCliente(id) {
+
+    fetch(URL + "/clientes/eliminar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id })
+    })
+    .then(() => {
+
+        verClientes();
+        verHabitaciones();
+    });
+}
 
 /* ================= HABITACIONES ================= */
 
 function crearHabitacion() {
+
     const numero = document.getElementById("numero").value;
     const tipo = document.getElementById("tipoHab").value;
 
     if (!numero || !tipo) {
+
         alert("Faltan datos");
         return;
     }
 
     fetch(URL + "/habitaciones", {
+
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
         body: JSON.stringify({
             numero,
             tipo,
             estado: "Libre"
         })
     })
-    .then(() => verHabitaciones());
+    .then(() => {
+
+        document.getElementById("numero").value = "";
+
+        verHabitaciones();
+    });
 }
 
+/* ================= VER HABITACIONES ================= */
+
 function verHabitaciones() {
+
     fetch(URL + "/habitaciones")
     .then(res => res.json())
     .then(data => {
@@ -114,27 +185,68 @@ function verHabitaciones() {
         habitacionesGlobal = data;
 
         renderHabitaciones(data);
+
         actualizarContadores(data);
     });
 }
 
+/* ================= RENDER HABITACIONES ================= */
+
 function renderHabitaciones(data) {
+
     let html = "";
 
     data.forEach(h => {
 
-        let estadoClass = h.estado === "ocupada" ? "ocupada" : "libre";
+        let estadoClass =
+            h.estado === "ocupada"
+            ? "ocupada"
+            : "libre";
 
         html += `
             <div class="card ${estadoClass}">
-                <h3>🛏 ${h.numero}</h3>
-                <p>Tipo: ${h.tipo}</p>
-                <p>Estado: ${h.estado}</p>
-                <p>👤 ${h.cliente || "Libre"}</p>
 
-                <button onclick="ocuparHabitacion(${h.numero})">Ocupar</button>
-                <button onclick="liberarHabitacion(${h.numero})">Liberar</button>
-                <button onclick="eliminarHabitacion(${h.id})">Eliminar</button>
+                <h3>🛏 ${h.numero}</h3>
+
+                <p>
+                    <strong>Tipo:</strong>
+                    ${h.tipo}
+                </p>
+
+                <p>
+                    <strong>Estado:</strong>
+                    ${h.estado}
+                </p>
+
+                <p>
+                    👤 ${h.cliente || "Libre"}
+                </p>
+
+                <div class="room-buttons">
+
+                    <button
+                        class="btn-ocupar"
+                        onclick="ocuparHabitacion(${h.numero})"
+                    >
+                        Ocupar
+                    </button>
+
+                    <button
+                        class="btn-liberar"
+                        onclick="liberarHabitacion(${h.numero})"
+                    >
+                        Liberar
+                    </button>
+
+                    <button
+                        class="btn-delete"
+                        onclick="eliminarHabitacion(${h.id})"
+                    >
+                        Eliminar
+                    </button>
+
+                </div>
+
             </div>
         `;
     });
@@ -145,10 +257,15 @@ function renderHabitaciones(data) {
 /* ================= CONTADORES ================= */
 
 function actualizarContadores(data) {
-    let libres = data.filter(h => h.estado !== "ocupada").length;
-    let ocupadas = data.filter(h => h.estado === "ocupada").length;
+
+    let libres =
+        data.filter(h => h.estado !== "ocupada").length;
+
+    let ocupadas =
+        data.filter(h => h.estado === "ocupada").length;
 
     document.getElementById("libres").innerText = libres;
+
     document.getElementById("ocupadas").innerText = ocupadas;
 }
 
@@ -157,31 +274,50 @@ function actualizarContadores(data) {
 function filtrar(tipo) {
 
     if (tipo === "todas") {
+
         renderHabitaciones(habitacionesGlobal);
     }
 
     if (tipo === "libre") {
-        renderHabitaciones(habitacionesGlobal.filter(h => h.estado !== "ocupada"));
+
+        renderHabitaciones(
+            habitacionesGlobal.filter(
+                h => h.estado !== "ocupada"
+            )
+        );
     }
 
     if (tipo === "ocupada") {
-        renderHabitaciones(habitacionesGlobal.filter(h => h.estado === "ocupada"));
+
+        renderHabitaciones(
+            habitacionesGlobal.filter(
+                h => h.estado === "ocupada"
+            )
+        );
     }
 }
 
-/* ================= ACCIONES ================= */
+/* ================= OCUPAR ================= */
 
 function ocuparHabitacion(numero) {
-    const cliente_id = document.getElementById("clienteAsignado").value;
+
+    const cliente_id =
+        document.getElementById("clienteAsignado").value;
 
     if (!cliente_id) {
+
         alert("Falta ID cliente");
         return;
     }
 
     fetch(URL + "/habitaciones/ocupar", {
+
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
         body: JSON.stringify({
             numero,
             cliente_id
@@ -191,6 +327,7 @@ function ocuparHabitacion(numero) {
     .then(data => {
 
         if (data.error) {
+
             alert(data.error);
             return;
         }
@@ -199,75 +336,52 @@ function ocuparHabitacion(numero) {
     });
 }
 
+/* ================= LIBERAR ================= */
 
 function liberarHabitacion(numero) {
+
     fetch(URL + "/habitaciones/liberar", {
+
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ numero })
-    })
-    .then(() => verHabitaciones());
-}
 
-function eliminarHabitacion(id) {
-    fetch(URL + "/habitaciones/eliminar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id })
-    })
-    .then(() => verHabitaciones());
-}
-
-/* ================= CLIENTES ACCIONES ================= */
-
-function eliminarCliente(id) {
-    fetch(URL + "/clientes/eliminar", {
-        method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ id })
+
+        body: JSON.stringify({ numero })
     })
     .then(() => {
-        verClientes();
+
         verHabitaciones();
     });
 }
 
-// 🔥 MEJORADO (SIN TEXTO LIBRE)
-function editarCliente(id, tipoActual) {
+/* ================= ELIMINAR HABITACION ================= */
 
-    let opcion = prompt("Escribe:\n1 = VIP\n2 = Normal");
+function eliminarHabitacion(id) {
 
-    if (!opcion) return;
+    fetch(URL + "/habitaciones/eliminar", {
 
-    let nuevoTipo = "";
+        method: "POST",
 
-    if (opcion === "1") nuevoTipo = "VIP";
-    else if (opcion === "2") nuevoTipo = "Normal";
-    else {
-        alert("Opción inválida");
-        return;
-    }
-
-    fetch(URL + "/clientes/actualizar", {
-        method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            id,
-            tipo: nuevoTipo
-        })
+
+        body: JSON.stringify({ id })
     })
     .then(() => {
-        verClientes();
+
+        verHabitaciones();
     });
 }
 
+/* ================= RESET ================= */
+
 function resetearSistema() {
 
-    const confirmar = confirm("⚠️ ¿Seguro que quieres borrar TODO el sistema?");
+    const confirmar =
+        confirm("⚠️ ¿Seguro que quieres borrar TODO el sistema?");
 
     if (!confirmar) return;
 
@@ -275,7 +389,8 @@ function resetearSistema() {
         method: "POST"
     })
     .then(res => res.json())
-    .then(data => {
+    .then(() => {
+
         alert("Sistema reiniciado 🚀");
 
         verClientes();
@@ -283,9 +398,11 @@ function resetearSistema() {
     });
 }
 
-/* ================= AUTO CARGA ================= */
+/* ================= AUTO LOAD ================= */
 
-window.onload = function() {
-    verHabitaciones();
+window.onload = function () {
+
     verClientes();
+
+    verHabitaciones();
 };
