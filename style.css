@@ -1,407 +1,642 @@
-:root {
-    --primary-dark: #0f172a;
-    --secondary-dark: #1e293b;
-    --accent-gold: #c5a059;
-    --bg-light: #f8fafc;
-    --white: #ffffff;
-    --green: #16a34a;
-    --red: #dc2626;
-    --gray: #64748b;
-
-    --transition: all 0.3s ease;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-/* ================= BODY ================= */
-
-body {
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    background: var(--bg-light);
-    color: #111827;
-    display: flex;
+body{
+font-family:'Poppins', sans-serif;
+overflow-x:hidden;
 }
 
-/* ================= SIDEBAR ================= */
-
-.sidebar {
-    width: 240px;
-    height: 100vh;
-    background: var(--primary-dark);
-    position: fixed;
-    left: 0;
-    top: 0;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+h1,h2,h3,h4,h5{
+font-family:'Playfair Display', serif;
 }
 
-.sidebar-header {
-    padding: 30px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+.section-padding{
+padding:100px 0;
 }
 
-.sidebar-header h3 {
-    color: var(--accent-gold);
-    letter-spacing: 2px;
+/* NAVBAR */
+
+.navbar{
+background:transparent;
+padding:20px 0;
+transition:0.4s;
+z-index:999;
 }
 
-.sidebar-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.navbar-scrolled{
+background:#111;
 }
 
-.sidebar-links li {
-    margin: 10px 0;
+.navbar-brand{
+color:#d4af37 !important;
+font-size:30px;
+font-weight:700;
 }
 
-.sidebar-links a {
-    color: #cbd5e1;
-    text-decoration: none;
-    display: block;
-    padding: 15px 25px;
-    transition: var(--transition);
+.nav-link{
+color:white !important;
+margin-left:20px;
+transition:0.3s;
 }
 
-.sidebar-links a:hover {
-    background: var(--accent-gold);
-    color: white;
+.nav-link:hover{
+color:#d4af37 !important;
 }
 
-.sidebar-footer {
-    padding: 20px;
-    text-align: center;
-    font-size: 0.8rem;
-    color: #94a3b8;
+/* HERO */
+
+.hero{
+height:100vh;
+background-image:url('https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1470&auto=format&fit=crop');
+background-size:cover;
+background-position:center;
+position:relative;
+
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-/* ================= MAIN ================= */
-
-.main-content {
-    margin-left: 240px;
-    width: calc(100% - 240px);
+.overlay{
+position:absolute;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.55);
 }
 
-/* ================= NAVBAR ================= */
-
-.navbar {
-    background: white;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+.hero-content{
+position:relative;
+z-index:2;
+text-align:center;
+color:white;
 }
 
-.nav-logo {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: var(--accent-gold);
+.hero-content h1{
+font-size:80px;
+margin-bottom:20px;
 }
 
-/* ================= HERO ================= */
-
-.hero {
-    height: 250px;
-
-    background:
-    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-    url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1470&auto=format&fit=crop');
-
-    background-size: cover;
-    background-position: center;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: white;
-    text-align: center;
+.hero-content p{
+font-size:22px;
+margin-bottom:30px;
 }
 
-.hero-content h1 {
-    font-size: 3rem;
-    margin: 0;
+/* BUTTON */
+
+.btn-gold{
+background:#d4af37;
+color:white;
+padding:14px 35px;
+border:none;
+text-decoration:none;
+transition:0.4s;
 }
 
-.hero-content p {
-    font-size: 1.2rem;
-    opacity: 0.8;
+.btn-gold:hover{
+background:#b8952f;
+color:white;
 }
 
-/* ================= CONTENT ================= */
+/* ABOUT */
 
-.container-padding {
-    padding: 30px;
+.about-img{
+border-radius:15px;
 }
 
-/* ================= CARDS ================= */
-
-.admin-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    margin-bottom: 25px;
-
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+.about h2{
+font-size:50px;
+margin-bottom:20px;
 }
 
-.admin-card h2 {
-    margin-top: 0;
-    color: var(--primary-dark);
+.about p{
+line-height:1.8;
+color:#555;
 }
 
-/* ================= INPUTS ================= */
+/* PAGE BANNER */
 
-input,
-select {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    outline: none;
-    transition: var(--transition);
-    width: 100%;
-    box-sizing: border-box;
+.page-banner{
+height:60vh;
+background-image:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1470&auto=format&fit=crop');
+background-size:cover;
+background-position:center;
+position:relative;
+
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-input:focus,
-select:focus {
-    border-color: var(--accent-gold);
+.page-content{
+position:relative;
+z-index:2;
+color:white;
+text-align:center;
 }
 
-/* ================= GRID INPUTS ================= */
-
-.input-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
-    gap: 15px;
+.page-content h1{
+font-size:70px;
 }
 
-/* ================= BUTTONS ================= */
+/* ROOMS */
 
-button {
-    border: none;
-    border-radius: 8px;
-    padding: 12px 18px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: bold;
-    color: white;
+.rooms{
+background:#f8f8f8;
 }
 
-button:hover {
-    transform: translateY(-2px);
+.room-card{
+border:none;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+transition:0.4s;
 }
 
-.btn-black {
-    background: var(--primary-dark);
+.room-card:hover{
+transform:translateY(-10px);
 }
 
-.btn-gold {
-    background: #d4af37;
-    color: black;
+.room-card img{
+height:280px;
+object-fit:cover;
 }
 
-.btn-gold-fill {
-    background: var(--accent-gold);
+.room-card .card-body{
+padding:25px;
 }
 
-.btn-danger {
-    background: var(--red);
+.room-card h5{
+font-size:30px;
 }
 
-/* ================= ESTADO ================= */
-
-.estado-box {
-    background: var(--secondary-dark);
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
+.room-card h6{
+color:#d4af37;
+margin:15px 0;
 }
 
-.estado-box h3 {
-    margin: 0;
+/* RESTAURANT */
+
+.restaurant-img{
+width:100%;
+height:350px;
+object-fit:cover;
+border-radius:15px;
+transition:0.4s;
 }
 
-.estado-box p {
-    font-size: 2rem;
-    margin: 10px 0 0;
+.restaurant-img:hover{
+transform:scale(1.03);
 }
 
-/* ================= TABLA ================= */
+/* RESERVATION */
 
-.tabla {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+.reservation{
+background:#111;
 }
 
-.tabla th {
-    background: var(--primary-dark);
-    color: white;
+form{
+background:white;
+padding:40px;
+border-radius:15px;
 }
 
-.tabla th,
-.tabla td {
-    padding: 15px;
-    text-align: center;
-    border-bottom: 1px solid #e5e7eb;
+.form-control,
+.form-select{
+padding:15px;
+margin-bottom:15px;
 }
 
-.tabla tr:hover {
-    background: #f3f4f6;
+/* FOOTER */
+
+.footer{
+background:black;
+color:white;
+text-align:center;
+padding:40px 0;
 }
 
-/* ================= BADGES ================= */
-
-.vip {
-    background: var(--green);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-weight: bold;
+.footer h4{
+color:#d4af37;
+margin-bottom:15px;
 }
 
-.normal {
-    background: var(--gray);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-weight: bold;
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+.hero-content h1{
+font-size:45px;
 }
 
-/* ================= HABITACIONES ================= */
-
-.rooms-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
-    gap: 20px;
+.page-content h1{
+font-size:45px;
 }
 
-/* ================= CARD ================= */
-
-.card {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-
-    transition: var(--transition);
+.about h2{
+font-size:35px;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+/* ROOM FEATURES */
+
+.room-features{
+background:white;
 }
 
-.card h3 {
-    margin-top: 0;
-    color: var(--primary-dark);
+.features-text h2{
+font-size:55px;
+margin-bottom:25px;
 }
 
-/* ================= ESTADOS ================= */
-
-.ocupada {
-    border-left: 8px solid var(--red);
+.features-text p{
+color:#666;
+line-height:1.9;
+margin-bottom:20px;
 }
 
-.libre {
-    border-left: 8px solid var(--green);
+.features-text ul{
+list-style:none;
+padding:0;
 }
 
-/* ================= ROOM BUTTONS ================= */
-
-.room-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
+.features-text ul li{
+margin-bottom:15px;
+font-size:17px;
+color:#444;
 }
 
-/* ================= BOTONES HABITACIONES ================= */
-
-.btn-ocupar {
-    background: #16a34a !important;
-    color: white !important;
+.breakfast-box{
+margin-top:30px;
+padding:25px;
+border-left:4px solid #d4af37;
+background:#faf7f1;
 }
 
-.btn-ocupar:hover {
-    background: #15803d !important;
+.breakfast-box h4{
+color:#d4af37;
+margin-bottom:10px;
+font-size:28px;
 }
 
-.btn-liberar {
-    background: #eab308 !important;
-    color: black !important;
+.feature-image{
+overflow:hidden;
+border-radius:15px;
 }
 
-.btn-liberar:hover {
-    background: #ca8a04 !important;
+.feature-image img{
+width:100%;
+height:500px;
+object-fit:cover;
+transition:0.5s;
+border-radius:15px;
 }
 
-.btn-delete {
-    background: #dc2626 !important;
-    color: white !important;
+.feature-image:hover img{
+transform:scale(1.05);
 }
 
-.btn-delete:hover {
-    background: #b91c1c !important;
+/* CTA */
+
+.cta-section{
+position:relative;
+
+padding:140px 0;
+
+background-image:url('https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?q=80&w=1470&auto=format&fit=crop');
+
+background-size:cover;
+background-position:center;
+text-align:center;
 }
 
-/* ================= BOTONES CLIENTES ================= */
-
-.vip-btn {
-    background: #16a34a !important;
-    color: white !important;
+.cta-section .overlay{
+background:rgba(0,0,0,0.65);
 }
 
-.vip-btn:hover {
-    background: #15803d !important;
+.cta-content{
+position:relative;
+z-index:2;
+color:white;
 }
 
-.normal-btn {
-    background: #64748b !important;
-    color: white !important;
+.cta-content h2{
+font-size:75px;
+margin-bottom:20px;
 }
 
-.normal-btn:hover {
-    background: #475569 !important;
+.cta-content p{
+font-size:22px;
+margin-bottom:35px;
 }
 
-.delete-btn {
-    background: #dc2626 !important;
-    color: white !important;
+
+}
+/* TESTIMONIALS */
+
+.testimonials{
+background:#f8f8f8;
 }
 
-.delete-btn:hover {
-    background: #991b1b !important;
+.section-title h2{
+font-size:60px;
+margin-bottom:20px;
 }
 
-/* ================= RESPONSIVE ================= */
+.section-title p{
+color:#666;
+font-size:18px;
+}
 
-@media(max-width: 768px){
+.testimonial-card{
+background:#111;
+color:white;
+padding:40px 30px;
+border-radius:20px;
+transition:0.5s;
+height:100%;
+position:relative;
+overflow:hidden;
+}
 
-    .sidebar {
-        display: none;
-    }
+.testimonial-card::before{
+content:"";
+position:absolute;
+top:0;
+left:-100%;
+width:100%;
+height:100%;
 
-    .main-content {
-        margin-left: 0;
-        width: 100%;
-    }
+background:linear-gradient(
+120deg,
+transparent,
+rgba(255,255,255,0.1),
+transparent
+);
 
-    .hero-content h1 {
-        font-size: 2rem;
-    }
+transition:0.8s;
+}
 
-    .room-buttons {
-        flex-direction: column;
-    }
+.testimonial-card:hover::before{
+left:100%;
+}
+
+.testimonial-card:hover{
+transform:translateY(-10px);
+box-shadow:0 15px 40px rgba(0,0,0,0.3);
+}
+
+.stars{
+color:#d4af37;
+font-size:24px;
+margin-bottom:15px;
+}
+
+.testimonial-card h4{
+font-size:28px;
+margin-bottom:5px;
+}
+
+.testimonial-card span{
+color:#bbb;
+font-size:14px;
+display:block;
+margin-bottom:20px;
+}
+
+.testimonial-card p{
+line-height:1.8;
+font-size:17px;
+}
+
+/* AWARDS */
+
+.award-box{
+background:white;
+padding:40px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+transition:0.4s;
+}
+
+.award-box:hover{
+transform:translateY(-8px);
+}
+
+.award-box h3{
+font-size:35px;
+color:#d4af37;
+margin-bottom:15px;
+}
+
+.award-box p{
+color:#666;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+.section-title h2{
+font-size:38px;
+}
+
+.testimonial-card{
+padding:30px 20px;
+}
+
+.award-box h3{
+font-size:26px;
+}
+
+}
+
+/* GUEST GALLERY */
+
+.guest-gallery{
+background:#f8f8f8;
+}
+
+.gallery-card{
+position:relative;
+overflow:hidden;
+border-radius:20px;
+}
+
+.gallery-card img{
+width:100%;
+height:450px;
+object-fit:cover;
+transition:0.5s;
+}
+
+.gallery-card:hover img{
+transform:scale(1.08);
+}
+
+.gallery-overlay{
+position:absolute;
+bottom:0;
+left:0;
+
+width:100%;
+
+padding:30px;
+
+background:linear-gradient(
+to top,
+rgba(0,0,0,0.85),
+transparent
+);
+
+color:white;
+
+transform:translateY(30px);
+
+opacity:0;
+
+transition:0.5s;
+}
+
+.gallery-card:hover .gallery-overlay{
+transform:translateY(0);
+opacity:1;
+}
+
+.gallery-overlay h4{
+font-size:30px;
+margin-bottom:10px;
+}
+
+.gallery-overlay p{
+font-size:16px;
+color:#ddd;
+}
+
+
+/* WHATSAPP */
+
+.whatsapp-btn{
+position:fixed;
+
+bottom:30px;
+right:30px;
+
+width:65px;
+height:65px;
+
+background:#25d366;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+border-radius:50%;
+
+font-size:35px;
+
+color:white;
+
+z-index:999;
+
+box-shadow:0 5px 20px rgba(0,0,0,0.3);
+
+transition:0.4s;
+}
+
+.whatsapp-btn:hover{
+transform:scale(1.1);
+color:white;
+}
+
+/* PREMIUM ICONS */
+
+.premium-icons{
+background:#111;
+color:white;
+}
+
+.icon-box{
+background:#1b1b1b;
+
+padding:40px 20px;
+
+text-align:center;
+
+border-radius:20px;
+
+transition:0.4s;
+
+height:100%;
+}
+
+.icon-box:hover{
+transform:translateY(-10px);
+
+background:#222;
+
+box-shadow:0 15px 30px rgba(0,0,0,0.4);
+}
+
+.icon-box i{
+font-size:50px;
+
+color:#d4af37;
+
+margin-bottom:20px;
+}
+
+.icon-box h4{
+font-size:24px;
+}
+
+/* MAP */
+
+.map-section{
+overflow:hidden;
+}
+
+.map-section iframe{
+filter:grayscale(100%);
+transition:0.5s;
+}
+
+.map-section iframe:hover{
+filter:grayscale(0%);
+}
+
+/* BOTON RESERVACION */
+
+.btn-reserva{
+
+    display:inline-block;
+
+    background:#d4af37;
+
+    color:#111827;
+
+    text-decoration:none;
+
+    padding:12px 24px;
+
+    border-radius:12px;
+
+    font-weight:bold;
+
+    transition:0.3s ease;
+
+    margin-top:15px;
+}
+
+.btn-reserva:hover{
+
+    background:#c49b2d;
+
+    transform:translateY(-3px);
+
+    color:#111827;
+
+    box-shadow:
+    0 10px 20px rgba(212,175,55,0.25);
 }
