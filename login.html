@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Hotel Luxe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Reusamos tus estilos -->
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #1a1a1a; /* Fondo oscuro premium */
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-container h2 { color: #c5a059; margin-bottom: 20px; letter-spacing: 2px; }
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="avatar-circle" style="margin: 0 auto 20px;"><div class="user-silhouette"></div></div>
+        <h2>HOTEL LUXE</h2>
+        <p>Acceso al Panel de Control</p>
+        <br>
+        <input type="text" id="user" placeholder="Usuario Staff">
+        <input type="password" id="pass" placeholder="Contraseña">
+        <button class="btn-gold-fill" onclick="intentarLogin()">Entrar al Sistema</button>
+        <div style="margin-top: 15px;">
+            <a href="#" style="color: #666; font-size: 0.8rem; text-decoration: none;">¿Problemas con el acceso?</a>
+        </div>
+    </div>
+
+    <script>
+        function intentarLogin() {
+            const user = document.getElementById('user').value;
+            const pass = document.getElementById('pass').value;
+
+            if (user === "admin" && pass === "1234") {
+                // Guardamos la sesión
+                localStorage.setItem('hotel_auth', 'true');
+                // Redirigimos al index
+                window.location.href = "index.html";
+            } else {
+                alert("Usuario o contraseña incorrectos");
+            }
+        }
+    </script>
+</body>
+</html>

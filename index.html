@@ -1,99 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Hotel Sistema</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Sistema Premium - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<h1>🏨 Hotel Sistema - Recepción</h1>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>PANEL CONTROL</h3>
+        </div>
+        <ul class="sidebar-links">
+            <li class="active"><a href="#">📊 Dashboard</a></li>
+            <li><a href="#">👤 Clientes</a></li>
+            <li><a href="#">🛏 Habitaciones</a></li>
+            <li><a href="#">💰 Pagos</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>Hotel Sistema v1.0</p>
+        </div>
+    </aside>
 
-<hr>
+    <div class="main-content" id="main-content">
+        <nav class="navbar">
+            <div class="nav-left">
+                <button id="sidebar-toggle" class="btn-toggle">☰</button>
+                <div class="nav-logo">HOTEL LUXE</div>
+            </div>
 
-<!-- 📊 ESTADO -->
-<div class="panel">
-    <h2>📊 Estado del Hotel</h2>
-    <p>🟢 Libres: <span id="libres">0</span></p>
-    <p>🔴 Ocupadas: <span id="ocupadas">0</span></p>
-</div>
+            <div class="nav-center">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar habitación o cliente...">
+                </div>
+            </div>
 
-<div class="panel">
-    <h2>⚠️ Administración</h2>
-    <button onclick="resetearSistema()" class="danger">
-        🗑 Resetear Sistema
-    </button>
-</div>
+            <div class="nav-right">
+                <button class="btn-icon">🔔</button>
+                <!-- Botón de Cerrar Sesión -->
+                <button onclick="logout()" class="btn-black" style="padding: 10px 20px; font-size: 0.8rem; border-radius: 5px; margin-left: 10px;">
+                    LOGOUT
+                </button>
+            </div>
+        </nav>
 
-<!-- 🎛 FILTROS -->
-<div class="panel">
-    <h2>🎛 Filtros</h2>
-    <button onclick="filtrar('todas')">Todas</button>
-    <button onclick="filtrar('libre')">Libres</button>
-    <button onclick="filtrar('ocupada')">Ocuppadas</button>
-</div>
+        <header class="hero">
+            <div class="hero-content">
+                <h1>SISTEMA DE RECEPCIÓN</h1>
+                <p>Bienvenido al Panel Administrativo</p>
+            </div>
+        </header>
 
-<hr>
+        <div class="container-padding">
+            <section class="admin-card">
+                <h2>👤 Registro de Clientes</h2>
+                <div class="input-row" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input id="nombre" placeholder="Nombre completo" style="padding: 10px; flex: 1;">
+                    <input id="tipo" placeholder="Tipo (VIP/Normal)" style="padding: 10px; flex: 1;">
+                </div>
+                <button class="btn-black" onclick="crearCliente()">Crear Cliente</button>
+                <button class="btn-gold" onclick="verClientes()">Ver Todos</button>
+                <div id="listaClientes" style="margin-top: 20px;"></div>
+            </section>
 
-
-<!-- 👤 CLIENTES -->
-<div class="panel">
-    <h2>👤 Clientes</h2>
-
-    <input id="nombre" placeholder="Nombre cliente">
-    
-    <select id="tipo">
-        <option value="VIP">VIP</option>
-        <option value="Normal">Normal</option>
-    </select>
-
-    <br><br>
-
-    <button onclick="crearCliente()">Crear Cliente</button>
-    <button onclick="verClientes()">Actualizar Lista</button>
-
-    <!-- 🔥 TABLA PRO -->
-    <div class="panel">
-        <h3>📋 Lista de clientes</h3>
-
-        <table class="tabla">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Cambiar Tipo</th>
-                    <th>Eliminar</th>
-                </tr>
-            </thead>
-            <tbody id="listaClientes"></tbody>
-        </table>
+            <section>
+                <h2>🛏 Estado de Habitaciones</h2>
+                <div id="habitaciones" class="rooms-grid">
+                    <!-- Aquí se cargan las habitaciones mediante JS -->
+                </div>
+            </section>
+        </div>
     </div>
-</div>
 
-<hr>
+<!-- Dentro de <div class="container-padding"> -->
 
-<!-- 🛏 HABITACIONES -->
-<div class="panel">
-    <h2>🛏 Habitaciones</h2>
+<section class="admin-card">
+    <h2>📅 Nueva Reserva</h2>
+    <div class="input-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <input id="reserva-cliente" placeholder="Nombre del Huésped" style="padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+        
+        <select id="reserva-habitacion" style="padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+            <option value="">Seleccionar Habitación...</option>
+            <!-- Se llenará dinámicamente con JS -->
+        </select>
 
-    <input id="numero" placeholder="Número habitación">
-    <input id="tipoHab" placeholder="Tipo (VIP o Normal)">
+        <input type="date" id="reserva-fecha" style="padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+    </div>
+    <button class="btn-gold-fill" onclick="hacerReserva()" style="width: 200px;">Confirmar Reserva</button>
+</section>
 
-    <br><br>
+<section>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>🛏 Habitaciones Disponibles</h2>
+        <div id="contador-habitaciones" style="font-weight: bold; color: var(--accent-gold);"></div>
+    </div>
+    <div id="habitaciones" class="rooms-grid"></div>
+</section>
 
-    <input id="clienteAsignado" placeholder="ID cliente">
-
-    <br><br>
-
-    <button onclick="crearHabitacion()">Crear</button>
-    <button onclick="verHabitaciones()">Actualizar</button>
-
-    <div class="container" id="habitaciones"></div>
-</div>
-
-<!-- 🔥 CONEXIÓN JS -->
-<script src="app.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
