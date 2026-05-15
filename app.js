@@ -102,6 +102,108 @@ function verClientes() {
     });
 }
 
+/* ================= SOLICITUDES ================= */
+
+function verSolicitudes() {
+
+    fetch(URL + "/solicitudes")
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        let html = "";
+
+        data.forEach(s => {
+
+            html += `
+
+            <tr>
+
+                <td>${s.id}</td>
+
+                <td>${s.nombre}</td>
+
+                <td>${s.correo}</td>
+
+                <td>${s.tipo_habitacion}</td>
+
+                <td>${s.estado}</td>
+
+                <td>
+
+                    <button
+                    class="btn-gold"
+
+                    onclick="aprobarSolicitud(${s.id})">
+
+                    ✔
+
+                    </button>
+
+                </td>
+
+                <td>
+
+                    <button
+                    class="btn-danger"
+
+                    onclick="rechazarSolicitud(${s.id})">
+
+                    ✖
+
+                    </button>
+
+                </td>
+
+            </tr>
+            `;
+        });
+
+        document.getElementById(
+            "listaSolicitudes"
+        ).innerHTML = html;
+    });
+}
+
+/* ================= APROBAR ================= */
+
+function aprobarSolicitud(id) {
+
+    fetch(URL + "/solicitudes/aprobar/" + id, {
+
+        method: "PUT"
+    })
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        alert(data.mensaje || data.error);
+
+        verSolicitudes();
+
+        verClientes();
+
+        verHabitaciones();
+    });
+}
+
+/* ================= RECHAZAR ================= */
+
+function rechazarSolicitud(id) {
+
+    fetch(URL + "/solicitudes/rechazar/" + id, {
+
+        method: "PUT"
+    })
+
+    .then(() => {
+
+        verSolicitudes();
+    });
+}
+
 /* ================= CAMBIAR TIPO ================= */
 
 function cambiarTipo(id, nuevoTipo) {
@@ -405,4 +507,6 @@ window.onload = function () {
     verClientes();
 
     verHabitaciones();
+
+    verSolicitudes();
 };

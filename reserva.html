@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Reservar</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<section class="reservation section-padding">
+
+<div class="container">
+
+<h1 style="color:white;text-align:center;margin-bottom:40px;">
+Reservar Habitación
+</h1>
+
+<form id="formReserva">
+
+<input
+type="text"
+id="nombre"
+placeholder="Nombre completo"
+required
+>
+
+<input
+type="email"
+id="correo"
+placeholder="Correo"
+required
+>
+
+<input
+type="text"
+id="telefono"
+placeholder="Teléfono"
+required
+>
+
+<select id="tipo">
+
+<option value="Sencilla">
+Sencilla
+</option>
+
+<option value="Deluxe">
+Deluxe
+</option>
+
+<option value="VIP">
+VIP
+</option>
+
+</select>
+
+<button class="btn-gold" type="submit">
+Enviar Solicitud
+</button>
+
+</form>
+
+</div>
+
+</section>
+
+<script>
+
+const URL = "http://localhost:3000";
+
+document
+.getElementById("formReserva")
+
+.addEventListener("submit", async (e) => {
+
+e.preventDefault();
+
+const datos = {
+
+nombre:
+document.getElementById("nombre").value,
+
+correo:
+document.getElementById("correo").value,
+
+telefono:
+document.getElementById("telefono").value,
+
+tipo_habitacion:
+document.getElementById("tipo").value
+};
+
+const res = await fetch(URL + "/solicitudes", {
+
+method: "POST",
+
+headers: {
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify(datos)
+});
+
+const data = await res.json();
+
+alert("Solicitud enviada correctamente 🔥");
+
+e.target.reset();
+
+});
+
+</script>
+
+</body>
+</html>

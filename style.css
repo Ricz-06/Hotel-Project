@@ -640,3 +640,84 @@ filter:grayscale(0%);
     box-shadow:
     0 10px 20px rgba(212,175,55,0.25);
 }
+/* RESERVAS */
+
+.reservation-page{
+
+    padding:120px 0;
+
+    background:#f8f8f8;
+}
+
+.room-box{
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,0.08);
+
+    transition:0.4s;
+}
+
+.room-box:hover{
+
+    transform:translateY(-10px);
+}
+
+.room-box h2{
+
+    font-size:40px;
+
+    margin-bottom:20px;
+}
+
+.room-box h3{
+
+    color:#d4af37;
+
+    margin-bottom:20px;
+}
+
+.room-box ul{
+
+    list-style:none;
+
+    padding:0;
+
+    margin-bottom:25px;
+}
+
+.room-box ul li{
+
+    margin-bottom:10px;
+}
+
+.deluxe{
+
+    border:3px solid #d4af37;
+}
+
+.vip{
+
+    background:#111;
+
+    color:white;
+}
+
+.reservation-form{
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.08);
+}
