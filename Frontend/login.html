@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Hotel Luxe</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        body{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+
+            background:
+            linear-gradient(
+            rgba(0,0,0,.55),
+            rgba(0,0,0,.55)
+            ),
+
+            url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1470&auto=format&fit=crop');
+
+            background-size:cover;
+            background-position:center;
+        }
+
+        .login-container{
+
+            background:rgba(255,255,255,.95);
+
+            backdrop-filter:blur(10px);
+
+            padding:40px;
+
+            border-radius:25px;
+
+            width:100%;
+            max-width:420px;
+
+            text-align:center;
+
+            box-shadow:
+            0 20px 40px rgba(0,0,0,.25);
+        }
+
+        .login-container h2{
+
+            color:#c5a059;
+
+            margin-bottom:15px;
+
+            letter-spacing:2px;
+
+            font-size:2rem;
+        }
+
+        .login-container p{
+
+            color:#666;
+
+            margin-bottom:25px;
+        }
+
+        .login-container input{
+
+            width:100%;
+
+            padding:14px;
+
+            margin-bottom:15px;
+
+            border:1px solid #ddd;
+
+            border-radius:12px;
+
+            box-sizing:border-box;
+
+            font-size:1rem;
+
+            outline:none;
+
+            transition:.3s;
+        }
+
+        .login-container input:focus{
+
+            border-color:#c5a059;
+
+            box-shadow:
+            0 0 0 4px rgba(197,160,89,.15);
+        }
+
+        .btn-gold-fill{
+
+            width:100%;
+        }
+
+        .btn-gold-fill:hover{
+
+            transform:translateY(-2px);
+        }
+
+        .help-link{
+
+            margin-top:15px;
+        }
+
+        .help-link a{
+
+            color:#666;
+
+            font-size:.85rem;
+
+            text-decoration:none;
+        }
+
+        .help-link a:hover{
+
+            color:#c5a059;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="avatar-circle" style="margin:0 auto 20px;">
+            <div class="user-silhouette"></div>
+        </div>
+
+        <h2>HOTEL LUXE</h2>
+
+        <p>
+            Acceso al Panel de Control
+        </p>
+
+        <input
+        type="text"
+        id="user"
+        placeholder="Usuario Staff"
+        >
+
+        <input
+        type="password"
+        id="pass"
+        placeholder="Contraseña"
+        >
+
+        <button
+        class="btn-gold-fill"
+        onclick="intentarLogin()"
+        >
+            Entrar al Sistema
+        </button>
+
+        <div class="help-link">
+
+            <a href="#">
+                ¿Problemas con el acceso?
+            </a>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function intentarLogin(){
+
+            const user =
+            document.getElementById('user').value;
+
+            const pass =
+            document.getElementById('pass').value;
+
+            if(user === "admin" && pass === "1234"){
+
+                localStorage.setItem(
+                    'hotel_auth',
+                    'true'
+                );
+
+                window.location.href =
+                "admin.html";
+
+            }else{
+
+                alert(
+                    "Usuario o contraseña incorrectos"
+                );
+            }
+        }
+
+    </script>
+
+</body>
+</html>

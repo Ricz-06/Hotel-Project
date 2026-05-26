@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hotel Sistema Premium</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+
+    
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            <h2>🏨 HOTEL LUXE</h2>
+        </div>
+
+        <ul class="sidebar-links">
+            <li><a href="#">📊 Dashboard</a></li>
+            <li><a href="#">👤 Clientes</a></li>
+            <li><a href="#">🛏 Habitaciones</a></li>
+            <li><a href="#">⚙ Administración</a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <p>Hotel Sistema v2.0</p>
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+
+            <div class="nav-logo">
+                🏨 HOTEL SISTEMA
+            </div>
+
+            <button class="btn-black">
+                Logout
+            </button>
+
+        </nav>
+
+        <!-- HERO -->
+        <header class="hero">
+
+            <div class="hero-content">
+                <h1>SISTEMA HOTELERO</h1>
+                <p>Panel Administrativo Premium</p>
+            </div>
+
+        </header>
+
+        <!-- CONTENIDO -->
+        <div class="container-padding">
+
+            <!-- ESTADO -->
+            <section class="admin-card">
+
+                <h2>📊 Estado del Hotel</h2>
+
+                <div class="estado-container">
+
+                    <div class="estado-box libres-box">
+                        <h3>🟢 Libres</h3>
+                        <p id="libres">0</p>
+                    </div>
+
+                    <div class="estado-box ocupadas-box">
+                        <h3>🔴 Ocupadas</h3>
+                        <p id="ocupadas">0</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ADMIN -->
+            <section class="admin-card">
+
+                <h2>⚠️ Administración</h2>
+
+                <button onclick="resetearSistema()" class="btn-danger">
+                    🗑 Resetear Sistema
+                </button>
+
+            </section>
+
+            <!-- FILTROS -->
+            <section class="admin-card">
+
+                <h2>🎛 Filtros</h2>
+
+                <div class="buttons-row">
+
+                    <button class="btn-black"
+                        onclick="filtrar('todas')">
+                        Todas
+                    </button>
+
+                    <button class="btn-gold"
+                        onclick="filtrar('libre')">
+                        Libres
+                    </button>
+
+                    <button class="btn-gold-fill"
+                        onclick="filtrar('ocupada')">
+                        Ocupadas
+                    </button>
+
+                </div>
+
+            </section>
+
+            <!-- CLIENTES -->
+            <section class="admin-card">
+
+                <h2>👤 Clientes</h2>
+
+                <div class="input-row">
+
+                    <input id="nombre"
+                        placeholder="Nombre cliente">
+
+                    <select id="tipo">
+                        <option value="VIP">VIP</option>
+                        <option value="Normal">Normal</option>
+                    </select>
+
+                </div>
+
+                <br>
+
+                <div class="buttons-row">
+
+                    <button class="btn-gold"
+                        onclick="crearCliente()">
+                        Crear Cliente
+                    </button>
+
+                    <button class="btn-black"
+                        onclick="verClientes()">
+                        Actualizar Lista
+                    </button>
+
+                </div>
+
+                <br><br>
+
+<!-- SOLICITUDES -->
+
+<section class="admin-card">
+
+<h2>📩 Solicitudes</h2>
+
+<div class="table-container">
+
+<table class="tabla">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Nombre</th>
+<th>Correo</th>
+<th>Habitación</th>
+<th>Estado</th>
+<th>Aprobar</th>
+<th>Rechazar</th>
+
+</tr>
+
+</thead>
+
+<tbody id="listaSolicitudes"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+                <!-- TABLA -->
+                <div class="table-container">
+
+                    <table class="tabla">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Cambiar Tipo</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="listaClientes"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+            <!-- HABITACIONES -->
+            <section class="admin-card">
+
+                <h2>🛏 Habitaciones</h2>
+
+                <div class="input-row">
+
+                    <input id="numero"
+                        placeholder="Número habitación">
+
+                    <select id="tipoHab">
+                        <option value="VIP">VIP</option>
+                        <option value="Normal">Normal</option>
+                    </select>
+
+                    <input id="clienteAsignado"
+                        placeholder="ID cliente">
+
+                </div>
+
+                <br>
+
+                <div class="buttons-row">
+
+                    <button class="btn-gold"
+                        onclick="crearHabitacion()">
+                        Crear
+                    </button>
+
+                    <button class="btn-black"
+                        onclick="verHabitaciones()">
+                        Actualizar
+                    </button>
+
+                </div>
+
+                <br><br>
+
+                <!-- GRID HABITACIONES -->
+                <div class="rooms-grid"
+                    id="habitaciones">
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+    <!-- JS -->
+    <script src="app.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reservar | Hotel Aurora</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-scrolled">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">Hotel Aurora</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span style="color:white;font-size:30px;">☰</span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="alojamiento.html">Alojamiento</a></li>
+        <li class="nav-item"><a class="nav-link" href="restaurante.html">Restaurante</a></li>
+        <li class="nav-item"><a class="nav-link" href="reserva.html">Reservar</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="page-banner reservation-banner">
+  <div class="overlay"></div>
+  <div class="page-content">
+    <p class="text-uppercase mb-2 plan-kicker">Elige tu plan</p>
+    <h1>Reservas con beneficios reales</h1>
+    <p>Desde una habitación sencilla hasta una experiencia VIP completa.</p>
+  </div>
+</section>
+
+<section class="section-padding reservation-plans">
+  <div class="container">
+    <div class="section-title text-center mb-5">
+      <h2>Planes disponibles</h2>
+      <p>Selecciona el plan que mejor se adapte a tu viaje y reserva en segundos.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="plan-card h-100">
+          <div class="plan-badge plan-basic">Normal</div>
+          <h3>Habitación Sencilla</h3>
+          <p class="plan-price">$80 <span>/ noche</span></p>
+          <p class="plan-description">Ideal para descanso práctico, cómodo y bonito.</p>
+          <ul class="plan-list">
+            <li><i class="fa-solid fa-check"></i> Habitación sencilla y acogedora</li>
+            <li><i class="fa-solid fa-check"></i> Baño privado</li>
+            <li><i class="fa-solid fa-check"></i> Ambiente tranquilo</li>
+            <li><i class="fa-solid fa-check"></i> Perfecta para estadías cortas</li>
+          </ul>
+          <button class="btn-reserva w-100" type="button" onclick="seleccionarPlan('Sencilla')">Elegir plan</button>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="plan-card plan-highlight h-100">
+          <div class="plan-badge plan-deluxe">Deluxe</div>
+          <h3>Habitación Deluxe</h3>
+          <p class="plan-price">$140 <span>/ noche</span></p>
+          <p class="plan-description">Más comodidad, más servicios y una estancia mejorada.</p>
+          <ul class="plan-list">
+            <li><i class="fa-solid fa-check"></i> Wifi gratis</li>
+            <li><i class="fa-solid fa-check"></i> Servicio a la habitación con pequeña comisión</li>
+            <li><i class="fa-solid fa-check"></i> Acceso a la piscina</li>
+            <li><i class="fa-solid fa-check"></i> Habitación más amplia y elegante</li>
+          </ul>
+          <button class="btn-reserva w-100" type="button" onclick="seleccionarPlan('Deluxe')">Elegir plan</button>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="plan-card h-100">
+          <div class="plan-badge plan-vip">VIP</div>
+          <h3>Suite VIP</h3>
+          <p class="plan-price">$250 <span>/ noche</span></p>
+          <p class="plan-description">La experiencia completa con beneficios premium incluidos.</p>
+          <ul class="plan-list">
+            <li><i class="fa-solid fa-check"></i> Habitación VIP gratis en el paquete</li>
+            <li><i class="fa-solid fa-check"></i> Buffet gratis de comida</li>
+            <li><i class="fa-solid fa-check"></i> Wifi premium y acceso total</li>
+            <li><i class="fa-solid fa-check"></i> Atención exclusiva y prioridad</li>
+          </ul>
+          <button class="btn-reserva w-100" type="button" onclick="seleccionarPlan('VIP')">Elegir plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reservation section-padding">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="reservation-form-box">
+          <h2 class="text-center mb-3">Completa tu solicitud</h2>
+          <p class="text-center reservation-note">El plan seleccionado se cargará automáticamente en el formulario.</p>
+
+          <form id="formReserva" class="reservation-form">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <input type="text" id="nombre" class="form-control" placeholder="Nombre completo" required>
+              </div>
+              <div class="col-md-6">
+                <input type="email" id="correo" class="form-control" placeholder="Correo" required>
+              </div>
+              <div class="col-md-6">
+                <input type="text" id="telefono" class="form-control" placeholder="Teléfono" required>
+              </div>
+              <div class="col-md-6">
+                <select id="tipo" class="form-select" required>
+                  <option value="Sencilla">Sencilla</option>
+                  <option value="Deluxe">Deluxe</option>
+                  <option value="VIP">VIP</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <button class="btn-reserva w-100" type="submit">Enviar Solicitud</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <h4>Hotel Aurora</h4>
+    <p>Managua, Nicaragua</p>
+    <p>© 2026 Todos los derechos reservados</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const URL = "http://localhost:3000";
+
+function seleccionarPlan(tipo) {
+  document.getElementById("tipo").value = tipo;
+  document.getElementById("formReserva").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+document.getElementById("formReserva").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const datos = {
+    nombre: document.getElementById("nombre").value,
+    correo: document.getElementById("correo").value,
+    telefono: document.getElementById("telefono").value,
+    tipo_habitacion: document.getElementById("tipo").value
+  };
+
+  const res = await fetch(URL + "/solicitudes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(datos)
+  });
+
+  if (!res.ok) {
+    alert("No se pudo enviar la solicitud");
+    return;
+  }
+
+  alert("Solicitud enviada correctamente 🔥");
+  e.target.reset();
+});
+</script>
+
+</body>
+</html>
