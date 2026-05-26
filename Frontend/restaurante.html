@@ -1,126 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Restaurante | Hotel Aurora</title>
+<meta name="description" content="Restaurante gourmet del Hotel Transilvania con menú, carrito de pedidos y facturación automática.">
+<title>Restaurante | Hotel Transilvania</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark navbar-scrolled">
-
-<div class="container">
-
-<a class="navbar-brand" href="index.html">
-Hotel Aurora
-</a>
-
-<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
-
-<span style="color:white;font-size:30px;">☰</span>
-
-</button>
-
-<div class="collapse navbar-collapse" id="menu">
-
-<ul class="navbar-nav ms-auto">
-
-<li class="nav-item">
-<a class="nav-link" href="index.html">Inicio</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="alojamiento.html">Alojamiento</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="restaurante.html">Restaurante</a>
-</li>
-
-
-
-</ul>
-
-</div>
-
-</div>
-
+  <div class="container">
+    <a class="navbar-brand" href="index.html">Hotel Transilvania</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span style="color:white;font-size:30px;">☰</span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="alojamiento.html">Alojamiento</a></li>
+        <li class="nav-item"><a class="nav-link" href="restaurante.html">Restaurante</a></li>
+        <li class="nav-item"><a class="nav-link" href="facturacion.html">Facturación</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
 <section class="page-banner restaurant-banner">
-
-<div class="overlay"></div>
-
-<div class="page-content">
-
-<h1>Restaurante Gourmet</h1>
-
-</div>
-
+  <div class="overlay"></div>
+  <div class="page-content">
+    <p class="text-uppercase mb-2 plan-kicker">Cocina gourmet</p>
+    <h1>Restaurante Hotel Transilvania</h1>
+    <p>Ordena platos, elige el tipo de servicio y genera tu factura automáticamente.</p>
+    <a class="btn-reserva mt-3" href="#menu-restaurante">Ver menú</a>
+  </div>
 </section>
 
-<section class="section-padding">
+<section class="section-padding" id="menu-restaurante">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-8">
+        <div class="section-title mb-4">
+          <h2>Menú disponible</h2>
+          <p>Selecciona los platos que deseas agregar al pedido.</p>
+        </div>
 
-<div class="container">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="menu-card">
+              <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=1470&auto=format&fit=crop" alt="Desayuno Nica" class="menu-card-img">
+              <div class="menu-card-body">
+                <h3>Desayuno Nica</h3>
+                <p>Gallo pinto, huevo, plátano y café.</p>
+                <div class="menu-card-footer">
+                  <span>$8.00</span>
+                  <button type="button" class="btn-reserva" data-item="desayuno_nica">Agregar</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-<div class="row g-4">
+          <div class="col-md-6">
+            <div class="menu-card">
+              <img src="https://images.unsplash.com/photo-1563379091339-03246963d36c?q=80&w=1470&auto=format&fit=crop" alt="Sopa de Mariscos" class="menu-card-img">
+              <div class="menu-card-body">
+                <h3>Sopa de Mariscos</h3>
+                <p>Caldo cremoso con mariscos frescos y especias.</p>
+                <div class="menu-card-footer">
+                  <span>$14.00</span>
+                  <button type="button" class="btn-reserva" data-item="sopa_mariscos">Agregar</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-<div class="col-lg-4">
+          <div class="col-md-6">
+            <div class="menu-card">
+              <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=1470&auto=format&fit=crop" alt="Pasta Alfredo" class="menu-card-img">
+              <div class="menu-card-body">
+                <h3>Pasta Alfredo</h3>
+                <p>Pasta con salsa cremosa, pollo y queso.</p>
+                <div class="menu-card-footer">
+                  <span>$12.00</span>
+                  <button type="button" class="btn-reserva" data-item="pasta_alfredo">Agregar</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-<img
-src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1470&auto=format&fit=crop"
-class="restaurant-img"
->
+          <div class="col-md-6">
+            <div class="menu-card">
+              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1470&auto=format&fit=crop" alt="Filete de Res" class="menu-card-img">
+              <div class="menu-card-body">
+                <h3>Filete de Res</h3>
+                <p>Cocción a punto con guarnición premium.</p>
+                <div class="menu-card-footer">
+                  <span>$18.00</span>
+                  <button type="button" class="btn-reserva" data-item="filete_res">Agregar</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-</div>
+          <div class="col-md-6">
+            <div class="menu-card">
+              <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=1470&auto=format&fit=crop" alt="Brownie con Helado" class="menu-card-img">
+              <div class="menu-card-body">
+                <h3>Brownie con Helado</h3>
+                <p>Postre caliente con helado artesanal.</p>
+                <div class="menu-card-footer">
+                  <span>$6.00</span>
+                  <button type="button" class="btn-reserva" data-item="brownie">Agregar</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-<div class="col-lg-4">
+          <div class="col-md-6">
+            <div class="menu-card">
+              <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=1470&auto=format&fit=crop" alt="Mojito Cero Alcohol" class="menu-card-img">
+              <div class="menu-card-body">
+                <h3>Mojito Cero Alcohol</h3>
+                <p>Refrescante bebida de menta y limón.</p>
+                <div class="menu-card-footer">
+                  <span>$5.00</span>
+                  <button type="button" class="btn-reserva" data-item="mojito">Agregar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<img
-src="https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1470&auto=format&fit=crop"
-class="restaurant-img"
->
+      <div class="col-lg-4">
+        <div class="cart-panel">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <p class="small text-uppercase mb-1 plan-kicker">Pedido actual</p>
+              <h3 class="mb-0">Carrito</h3>
+            </div>
+            <span class="cart-badge" id="cartCount">0 productos</span>
+          </div>
 
-</div>
+          <label class="form-label" for="serviceMode">Tipo de servicio</label>
+          <select class="form-select mb-3" id="serviceMode">
+            <option value="mesa">Mesa</option>
+            <option value="llevar">Para llevar</option>
+            <option value="habitacion">Servicio a habitación</option>
+          </select>
 
-<div class="col-lg-4">
+          <div id="cartItems" class="cart-items"></div>
 
-<img
-src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1470&auto=format&fit=crop"
-class="restaurant-img"
->
+          <div class="cart-summary">
+            <div class="d-flex justify-content-between">
+              <span>Subtotal</span>
+              <strong id="cartTotal">$0.00</strong>
+            </div>
+            <p class="mt-2 mb-0 text-muted small">La factura se genera en la página de facturación.</p>
+          </div>
 
-</div>
+          <div class="d-grid gap-2 mt-3">
+            <a id="goBillingBtn" class="btn-reserva text-center" href="facturacion.html">Ir a facturación</a>
+            <button id="clearCartBtn" type="button" class="btn btn-outline-dark">Vaciar pedido</button>
+          </div>
+        </div>
 
-</div>
+        <div class="info-box mt-4">
+          <h4>Horarios</h4>
+          <p>Lunes a domingo: 7:00 a.m. - 10:00 p.m.</p>
+          <h4>Servicios</h4>
+          <p>Mesa, para llevar y servicio a habitación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-</div>
+<section class="section-padding pt-0">
+  <div class="container">
+    <div class="section-title text-center mb-4">
+      <h2>Galería del restaurante</h2>
+      <p>Ambiente elegante, atención premium y cocina preparada al momento.</p>
+    </div>
 
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1470&auto=format&fit=crop" alt="Comedor del restaurante" class="restaurant-img">
+      </div>
+      <div class="col-lg-4">
+        <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1470&auto=format&fit=crop" alt="Plato servido en el restaurante" class="restaurant-img">
+      </div>
+      <div class="col-lg-4">
+        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1470&auto=format&fit=crop" alt="Mesa elegante del restaurante" class="restaurant-img">
+      </div>
+    </div>
+  </div>
 </section>
 
 <footer class="footer">
-
-<div class="container">
-
-<h4>Hotel Aurora</h4>
-
-<p>Managua, Nicaragua</p>
-
-</div>
-
+  <div class="container">
+    <h4>Hotel Transilvania</h4>
+    <p>Managua, Nicaragua</p>
+    <p>© 2026 Todos los derechos reservados</p>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="restaurant.js"></script>
 <script src="script.js"></script>
 
 </body>

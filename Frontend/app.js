@@ -1,7 +1,19 @@
 const URL = "http://localhost:3000";
 
+const MAX_HABITACIONES = 50;
+
 /* 🔥 GLOBAL */
 let habitacionesGlobal = [];
+
+const SERVICIOS_POR_TIPO = {
+    Normal: ["WiFi", "Baño privado", "Aire acondicionado"],
+    Deluxe: ["WiFi premium", "Desayuno incluido", "Acceso a piscina"],
+    VIP: ["WiFi premium", "Desayuno buffet", "Spa privado"]
+};
+
+function obtenerServiciosPorTipo(tipo) {
+    return SERVICIOS_POR_TIPO[tipo] || SERVICIOS_POR_TIPO.Normal;
+}
 
 /* ================= CLIENTES ================= */
 
@@ -68,17 +80,24 @@ function verClientes() {
                     <td>
 
                         <button
-                            class="vip-btn"
-                            onclick="cambiarTipo(${c.id}, 'VIP')"
-                        >
-                            VIP
-                        </button>
-
-                        <button
                             class="normal-btn"
                             onclick="cambiarTipo(${c.id}, 'Normal')"
                         >
                             Normal
+                        </button>
+
+                        <button
+                            class="deluxe-btn"
+                            onclick="cambiarTipo(${c.id}, 'Deluxe')"
+                        >
+                            Deluxe
+                        </button>
+
+                        <button
+                            class="vip-btn"
+                            onclick="cambiarTipo(${c.id}, 'VIP')"
+                        >
+                            VIP
                         </button>
 
                     </td>
@@ -254,6 +273,12 @@ function crearHabitacion() {
         return;
     }
 
+    if (habitacionesGlobal.length >= MAX_HABITACIONES) {
+
+        alert(`Solo se permiten ${MAX_HABITACIONES} habitaciones máximo`);
+        return;
+    }
+
     fetch(URL + "/habitaciones", {
 
         method: "POST",
@@ -265,10 +290,19 @@ function crearHabitacion() {
         body: JSON.stringify({
             numero,
             tipo,
-            estado: "Libre"
+            estado: "Libre",
+            servicios: obtenerServiciosPorTipo(tipo)
         })
     })
-    .then(() => {
+    .then(async (res) => {
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+
+            alert(data.error || "No se pudo crear la habitación");
+            return;
+        }
 
         document.getElementById("numero").value = "";
 
@@ -298,12 +332,16 @@ function renderHabitaciones(data) {
 
     let html = "";
 
-    data.forEach(h => {
+        data.forEach(h => {
 
         let estadoClass =
             h.estado === "ocupada"
             ? "ocupada"
             : "libre";
+
+        const servicios = Array.isArray(h.servicios)
+            ? h.servicios
+            : obtenerServiciosPorTipo(h.tipo);
 
         html += `
             <div class="card ${estadoClass}">
@@ -323,6 +361,10 @@ function renderHabitaciones(data) {
                 <p>
                     👤 ${h.cliente || "Libre"}
                 </p>
+
+                <ul class="room-services">
+                    ${servicios.map(servicio => `<li>${servicio}</li>`).join("")}
+                </ul>
 
                 <div class="room-buttons">
 
