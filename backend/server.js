@@ -46,6 +46,10 @@ const solicitudesRoutes = require('./routes/solicitudes');
 
 app.use('/solicitudes', solicitudesRoutes);
 
+const facturasRoutes = require('./routes/facturas');
+
+app.use('/facturas', facturasRoutes);
+
 /* =========================================================
    🔥 RESET TOTAL DEL SISTEMA
    ========================================================= */
