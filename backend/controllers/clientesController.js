@@ -1,60 +1,65 @@
-const db = require('../db');
+const prisma = require('../prisma/client');
 
 // OBTENER CLIENTES
-const obtenerClientes = (req, res) => {
-    db.query('SELECT * FROM clientes', (err, results) => {
-        if (err) return res.status(500).json(err);
-        res.json(results);
-    });
+const obtenerClientes = async (req, res) => {
+    try {
+        const clientes = await prisma.cliente.findMany({
+            orderBy: { id: 'asc' }
+        });
+        res.json(clientes);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener clientes' });
+    }
 };
 
 // CREAR CLIENTE
-const crearCliente = (req, res) => {
+const crearCliente = async (req, res) => {
     const { nombre, tipo } = req.body;
 
-    db.query(
-        "INSERT INTO clientes (nombre, tipo) VALUES (?, ?)",
-        [nombre, tipo],
-        (err, result) => {
-            if (err) return res.status(500).json(err);
-
-            res.json({
-                id: result.insertId,
-                nombre,
-                tipo
-            });
-        }
-    );
+    try {
+        const cliente = await prisma.cliente.create({
+            data: { nombre, tipo: tipo || 'Normal' }
+        });
+        res.json(cliente);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al crear cliente' });
+    }
 };
 
 // ELIMINAR CLIENTE
-const eliminarCliente = (req, res) => {
+const eliminarCliente = async (req, res) => {
     const { id } = req.body;
 
-    db.query(
-        "DELETE FROM clientes WHERE id=?",
-        [id],
-        (err) => {
-            if (err) return res.status(500).json(err);
+    try {
+        // Liberar habitaciones del cliente antes de eliminarlo
+        await prisma.habitacion.updateMany({
+            where: { clienteId: Number(id) },
+            data:  { clienteId: null, estado: 'Libre' }
+        });
 
-            res.json({ mensaje: "Cliente eliminado" });
-        }
-    );
+        await prisma.cliente.delete({
+            where: { id: Number(id) }
+        });
+
+        res.json({ mensaje: 'Cliente eliminado' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al eliminar cliente' });
+    }
 };
 
-// ACTUALIZAR CLIENTE
-const actualizarCliente = (req, res) => {
+// ACTUALIZAR TIPO DE CLIENTE
+const actualizarCliente = async (req, res) => {
     const { id, tipo } = req.body;
 
-    db.query(
-        "UPDATE clientes SET tipo=? WHERE id=?",
-        [tipo, id],
-        (err) => {
-            if (err) return res.status(500).json(err);
-
-            res.json({ mensaje: "Cliente actualizado" });
-        }
-    );
+    try {
+        const cliente = await prisma.cliente.update({
+            where: { id: Number(id) },
+            data:  { tipo }
+        });
+        res.json({ mensaje: 'Cliente actualizado', cliente });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar cliente' });
+    }
 };
 
 module.exports = {

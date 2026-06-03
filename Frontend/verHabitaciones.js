@@ -9,7 +9,7 @@ function verHabitaciones() {
         let html = "";
 
         data.forEach(h => {
-
+b
             let estadoClass = h.estado === "ocupada" ? "ocupada" : "libre";
 
             html += `

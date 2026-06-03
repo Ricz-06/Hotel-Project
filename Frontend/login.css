@@ -1,0 +1,170 @@
+:root {
+    --gold: #c5a059;
+    --gold-glow: rgba(197, 160, 89, 0.25);
+    --bg-dark: #0f0d13;
+    --error: #f43f5e;
+    --success: #10b981;
+    --text-muted: #777;
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Montserrat', sans-serif; 
+}
+
+body { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), 
+                url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1470&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Contenedores de Tarjetas Flotantes */
+.login-container, .dashboard-glass { 
+    background: rgba(255, 255, 255, 0.96); 
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    padding: 40px; 
+    border-radius: 25px; 
+    width: 100%; 
+    max-width: 420px; 
+    text-align: center; 
+    box-shadow: 0 20px 40px rgba(0,0,0,.35); 
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+.dashboard-glass { max-width: 550px; }
+
+/* Control de Pestañas */
+.tabs { 
+    display: flex; 
+    gap: 8px; 
+    background: rgba(0, 0, 0, 0.04); 
+    padding: 6px; 
+    border-radius: 14px; 
+    margin-bottom: 25px; 
+    border: 1px solid rgba(0, 0, 0, 0.05); 
+}
+.tabs button { 
+    flex: 1; 
+    background: none; 
+    border: none; 
+    color: var(--text-muted); 
+    font-size: 0.9rem; 
+    font-weight: 600; 
+    cursor: pointer; 
+    padding: 10px; 
+    border-radius: 10px; 
+    transition: 0.3s ease; 
+}
+.tabs button.active { 
+    background: white; 
+    color: var(--gold); 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+}
+
+h2 { 
+    color: var(--gold); 
+    margin-bottom: 6px; 
+    letter-spacing: 2px; 
+    font-size: 1.8rem; 
+    font-weight: 700;
+}
+.subtitle { 
+    color: var(--text-muted); 
+    font-size: 0.85rem; 
+    margin-bottom: 25px; 
+}
+
+/* Cajas de Texto de Entrada */
+.input-wrapper { position: relative; margin-bottom: 16px; }
+.input-wrapper input { 
+    width: 100%; 
+    padding: 14px; 
+    background: white; 
+    border: 1px solid #ddd; 
+    border-radius: 12px; 
+    color: #333; 
+    outline: none; 
+    font-size: 0.95rem; 
+    transition: all 0.3s ease; 
+}
+.input-wrapper input:focus { 
+    border-color: var(--gold); 
+    box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.15); 
+}
+
+/* Enlaces Internos */
+.forgot-pass-wrapper { text-align: right; margin-top: -10px; margin-bottom: 20px; }
+.forgot-pass-wrapper span { font-size: 0.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+.forgot-pass-wrapper span:hover { color: var(--gold); text-decoration: underline; }
+
+.switch-form-text { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 20px; }
+.switch-form-text span { color: var(--gold); font-weight: 600; cursor: pointer; transition: 0.2s ease; }
+.switch-form-text span:hover { text-decoration: underline; }
+
+/* Botón de Oro Insignia */
+.btn-gold-fill { 
+    width: 100%; 
+    padding: 14px; 
+    background: var(--gold); 
+    color: white; 
+    border: none; 
+    border-radius: 12px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    font-size: 0.95rem; 
+    box-shadow: 0 4px 15px var(--gold-glow); 
+    transition: all 0.3s ease; 
+}
+.btn-gold-fill:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4); 
+}
+
+/* Divisores Estéticos */
+.divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 0.8rem; margin: 20px 0; }
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #eee; }
+.divider:not(:empty)::before { margin-right: .5em; }
+.divider:not(:empty)::after { margin-left: .5em; }
+
+/* Redes Sociales Corporativas */
+.social-auth { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.social-btn { 
+    display: flex; align-items: center; justify-content: center; gap: 10px; 
+    border-radius: 12px; padding: 11px; border: 1px solid #ddd; 
+    background: white; color: #333; cursor: pointer; font-weight: 500; 
+    transition: 0.2s ease; font-size: 0.85rem; 
+}
+.social-btn:hover { background: #fafafa; transform: translateY(-2px); }
+
+/* Toasts Dinámicos de Alerta */
+.toast-container { position: fixed; top: 24px; right: 24px; z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
+.modern-toast { 
+    background: #fff; border: 1px solid var(--error); box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+    color: #333; padding: 16px 20px; border-radius: 14px; display: flex; align-items: center; 
+    gap: 12px; min-width: 320px; position: relative; overflow: hidden; 
+    animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+}
+.modern-toast.success-toast { border-color: var(--success); }
+@keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.modern-toast.hide { animation: slideOut 0.3s ease forwards; }
+@keyframes slideOut { to { transform: translateX(120%); opacity: 0; } }
+.toast-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--error); width: 100%; }
+.modern-toast.success-toast .toast-progress { background: var(--success); }
+
+/* Modales e Interfaz Emergente */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 100; }
+.selector-popup { background: white; border: 1px solid #eee; color: #333; padding: 30px; border-radius: 20px; width: 360px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+.account-item { display: flex; align-items: center; gap: 15px; padding: 12px; margin-top: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; border: 1px solid #eee; text-align: left;}
+.account-item:hover { background: #f9f9f9; border-color: var(--gold); }
+.btn-cancel { margin-top: 20px; background: none; border: none; color: var(--error); cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+
+.hidden { display: none !important; }

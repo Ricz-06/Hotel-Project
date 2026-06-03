@@ -3,204 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Login - Hotel Luxe</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-
-        body{
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-
-            background:
-            linear-gradient(
-            rgba(0,0,0,.55),
-            rgba(0,0,0,.55)
-            ),
-
-            url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1470&auto=format&fit=crop');
-
-            background-size:cover;
-            background-position:center;
-        }
-
-        .login-container{
-
-            background:rgba(255,255,255,.95);
-
-            backdrop-filter:blur(10px);
-
-            padding:40px;
-
-            border-radius:25px;
-
-            width:100%;
-            max-width:420px;
-
-            text-align:center;
-
-            box-shadow:
-            0 20px 40px rgba(0,0,0,.25);
-        }
-
-        .login-container h2{
-
-            color:#c5a059;
-
-            margin-bottom:15px;
-
-            letter-spacing:2px;
-
-            font-size:2rem;
-        }
-
-        .login-container p{
-
-            color:#666;
-
-            margin-bottom:25px;
-        }
-
-        .login-container input{
-
-            width:100%;
-
-            padding:14px;
-
-            margin-bottom:15px;
-
-            border:1px solid #ddd;
-
-            border-radius:12px;
-
-            box-sizing:border-box;
-
-            font-size:1rem;
-
-            outline:none;
-
-            transition:.3s;
-        }
-
-        .login-container input:focus{
-
-            border-color:#c5a059;
-
-            box-shadow:
-            0 0 0 4px rgba(197,160,89,.15);
-        }
-
-        .btn-gold-fill{
-
-            width:100%;
-        }
-
-        .btn-gold-fill:hover{
-
-            transform:translateY(-2px);
-        }
-
-        .help-link{
-
-            margin-top:15px;
-        }
-
-        .help-link a{
-
-            color:#666;
-
-            font-size:.85rem;
-
-            text-decoration:none;
-        }
-
-        .help-link a:hover{
-
-            color:#c5a059;
-        }
-
-    </style>
-
+    <title>Premium Auth - Hotel Transilvania</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
 </head>
-
 <body>
 
-    <div class="login-container">
+    <div id="toast-container" class="toast-container"></div>
 
-        <div class="avatar-circle" style="margin:0 auto 20px;">
-            <div class="user-silhouette"></div>
+    <div class="login-container" id="auth-card">
+        <div class="tabs" id="auth-tabs">
+            <button id="tab-l" class="active" onclick="switchTab('login')">Login Staff</button>
+            <button id="tab-r" onclick="switchTab('register')">Registro</button>
         </div>
 
-        <h2>HOTEL LUXE</h2>
+        <div class="form-content">
+            <form id="form-login" onsubmit="handleAuth(event, 'login')">
+                <h2>HOTEL Transilvania</h2>
+                <p class="subtitle">Acceso al Panel de Control Informatizado</p>
+                <div class="input-wrapper">
+                    <input type="text" id="user-l" placeholder="Usuario Staff" required>
+                </div>
+                <div class="input-wrapper">
+                    <input type="password" id="pass-l" placeholder="Contraseña" required>
+                </div>
+                <div class="forgot-pass-wrapper">
+                    <span onclick="switchTab('recover')">¿Problemas con el acceso?</span>
+                </div>
+                <button type="submit" class="btn-gold-fill">Entrar al Sistema</button>
+                <p class="switch-form-text">¿Nuevo empleado? <span onclick="switchTab('register')">Regístrate aquí</span></p>
+            </form>
 
-        <p>
-            Acceso al Panel de Control
-        </p>
+            <form id="form-register" class="hidden" onsubmit="handleAuth(event, 'registro')">
+                <h2>CREAR CUENTA</h2>
+                <p class="subtitle">Alta en la plataforma interna del hotel</p>
+                <div class="input-wrapper">
+                    <input type="text" id="name-r" placeholder="Nombre completo" required>
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="user-r" placeholder="Usuario Staff asignado" required>
+                </div>
+                <div class="input-wrapper">
+                    <input type="password" id="pass-r" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn-gold-fill">Registrar Empleado</button>
+                <p class="switch-form-text">¿Ya tienes cuenta? <span onclick="switchTab('login')">Inicia sesión</span></p>
+            </form>
 
-        <input
-        type="text"
-        id="user"
-        placeholder="Usuario Staff"
-        >
+            <form id="form-recover" class="hidden" onsubmit="handleAuth(event, 'recuperar')">
+                <h2>RESTABLECER</h2>
+                <p class="subtitle">Introduce tu usuario staff para enviar reporte a soporte.</p>
+                <div class="input-wrapper">
+                    <input type="text" id="user-recover" placeholder="Tu usuario Staff" required>
+                </div>
+                <div class="input-wrapper">
+                    <input type="email" id="email-recover" placeholder="Correo electrónico corporativo" required>
+                </div>
+                <button type="submit" class="btn-gold-fill">Enviar solicitud</button>
+                <p class="switch-form-text">¿Recordaste tus datos? <span onclick="switchTab('login')">Volver</span></p>
+            </form>
 
-        <input
-        type="password"
-        id="pass"
-        placeholder="Contraseña"
-        >
-
-        <button
-        class="btn-gold-fill"
-        onclick="intentarLogin()"
-        >
-            Entrar al Sistema
-        </button>
-
-        <div class="help-link">
-
-            <a href="#">
-                ¿Problemas con el acceso?
-            </a>
-
+            <div id="oauth-container">
+                <div class="divider"><span>o ingresar con corporativo</span></div>
+                <div class="social-auth">
+                    <button class="social-btn" onclick="openModal('google-modal')">
+                        <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                        Google Workspace
+                    </button>
+                    <button class="social-btn" onclick="openModal('apple-modal')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.057 12.781c.032 2.588 2.246 3.445 2.275 3.457-.022.072-.351 1.203-1.152 2.373-.693 1.012-1.413 2.019-2.541 2.039-1.11.021-1.468-.654-2.736-.654-1.268 0-1.666.634-2.716.674-1.09.041-1.921-1.074-2.618-2.083-1.432-2.074-2.522-5.856-1.053-8.406.729-1.264 2.034-2.064 3.447-2.084 1.072-.02 2.083.72 2.736.72.654 0 1.884-.897 3.16-.767.534.022 2.035.215 2.999 1.624-.077.047-1.794 1.045-1.774 3.137zm-2.316-8.525c.578-.7 0-1.393.578-2.148-.548-.663-1.291-1.109-2.078-1.109-1.272.019-2.428.913-2.029 2.257.653.056 1.408-.34 1.905-.902 1.341-1.477.578 1.477 1.624 1.902z"/></svg>
+                        Apple ID
+                    </button>
+                </div>
+            </div>
         </div>
-
     </div>
 
-    <script>
+    <div id="google-modal" class="modal hidden">
+        <div class="selector-popup">
+            <h3>Cuentas Corporativas</h3>
+            <div class="account-item" onclick="handleAuth(event, 'oauth', 'Juan Pérez')">
+                <div style="width:32px;height:32px;background:var(--gold);color:white;border-radius:50%;display:grid;place-items:center;font-weight:bold;">J</div>
+                <div><strong>Juan Pérez</strong><div style="font-size:0.75rem;color:var(--text-muted)">j.perez@hotelluxe.com</div></div>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModales()">Cancelar</button>
+        </div>
+    </div>
 
-        function intentarLogin(){
+    <div id="apple-modal" class="modal hidden">
+        <div class="selector-popup">
+            <h3>Iniciar Sesión Corporativa</h3>
+            <div class="account-item" onclick="handleAuth(event, 'oauth', 'Soporte iCloud')">
+                <div style="width:32px;height:32px;background:#000;color:white;border-radius:50%;display:grid;place-items:center;font-weight:bold;"></div>
+                <div><strong>iCloud Staff</strong><div style="font-size:0.75rem;color:var(--text-muted)">ID Verificado en Dispositivo</div></div>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModales()">Cancelar</button>
+        </div>
+    </div>
 
-            const user =
-            document.getElementById('user').value;
+    <div id="main-menu" class="dashboard-glass hidden">
+        <h2>PANEL DE CONTROL</h2>
+        <p style="margin: 10px 0; color: var(--gold); font-weight: 600;">Hotel Transilvania - Gestión Interna</p>
+        
+        <p id="user-title" style="margin-bottom: 20px; font-weight: 500; color: #333; font-size: 1.2rem;"></p>
+        
+        <div id="avatar-initial" style="width:60px; height:60px; background:var(--gold); color:white; border-radius:50%; display:grid; place-items:center; font-size:1.5rem; font-weight:bold; margin:0 auto 25px;">-</div>
+        
+        <button class="btn-gold-fill" onclick="cerrarSesion()">Cerrar Sesión Segura</button>
+    </div>
 
-            const pass =
-            document.getElementById('pass').value;
-
-            if(user === "admin" && pass === "1234"){
-
-                localStorage.setItem(
-                    'hotel_auth',
-                    'true'
-                );
-
-                window.location.href =
-                "admin.html";
-
-            }else{
-
-                alert(
-                    "Usuario o contraseña incorrectos"
-                );
-            }
-        }
-
-    </script>
-
+    <script src="login.js"></script>
 </body>
 </html>

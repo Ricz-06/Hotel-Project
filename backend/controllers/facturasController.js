@@ -1,49 +1,39 @@
-const db = require('../db');
+const prisma = require('../prisma/client');
 
-/* =========================
-   CREAR FACTURA
-========================= */
+// CREAR FACTURA
+const crearFactura = async (req, res) => {
+    const { cliente, correo, telefono, servicio, subtotal, iva, total } = req.body;
 
-const crearFactura = (req, res) => {
+    try {
+        const factura = await prisma.factura.create({
+            data: {
+                cliente,
+                correo,
+                telefono,
+                servicio,
+                subtotal: Number(subtotal),
+                iva:      Number(iva),
+                total:    Number(total)
+            }
+        });
 
-    const {
-        cliente,
-        correo,
-        telefono,
-        servicio,
-        subtotal,
-        iva,
-        total
-    } = req.body;
-
-    db.query(
-
-        `INSERT INTO facturas
-        (cliente, correo, telefono, servicio, subtotal, iva, total)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-
-        [
-            cliente,
-            correo,
-            telefono,
-            servicio,
-            subtotal,
-            iva,
-            total
-        ],
-
-        (err, result) => {
-
-            if (err)
-                return res.status(500).json(err);
-
-            res.json({
-                mensaje: "Factura guardada"
-            });
-        }
-    );
+        res.json({ mensaje: 'Factura guardada', factura });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al guardar factura' });
+    }
 };
 
-module.exports = {
-    crearFactura
+// OBTENER FACTURAS
+const obtenerFacturas = async (req, res) => {
+    try {
+        const facturas = await prisma.factura.findMany({
+            orderBy: { creadoEn: 'desc' }
+        });
+
+        res.json(facturas);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener facturas' });
+    }
 };
+
+module.exports = { crearFactura, obtenerFacturas };

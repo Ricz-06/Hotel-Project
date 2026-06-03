@@ -1,11 +1,10 @@
-const db = require('../db');
+const prisma = require('../prisma/client');
 
-/* ================================
-   CREAR SOLICITUD
-================================ */
+// ================================
+// CREAR SOLICITUD
+// ================================
 
-const crearSolicitud = (req, res) => {
-
+const crearSolicitud = async (req, res) => {
     const {
         nombre,
         correo,
@@ -13,201 +12,147 @@ const crearSolicitud = (req, res) => {
         tipo_habitacion
     } = req.body;
 
-    db.query(
-
-        `INSERT INTO solicitudes
-        (nombre, correo, telefono, tipo_habitacion)
-        VALUES (?, ?, ?, ?)`,
-
-        [
-            nombre,
-            correo,
-            telefono,
-            tipo_habitacion
-        ],
-
-        (err, result) => {
-
-            if (err)
-                return res.status(500).json(err);
-
-            res.json({
-                mensaje: "Solicitud enviada"
-            });
-        }
-    );
-};
-
-/* ================================
-   OBTENER SOLICITUDES
-================================ */
-
-const obtenerSolicitudes = (req, res) => {
-
-    db.query(
-        "SELECT * FROM solicitudes ORDER BY id DESC",
-
-        (err, results) => {
-
-            if (err)
-                return res.status(500).json(err);
-
-            res.json(results);
-        }
-    );
-};
-
-/* ================================
-   APROBAR SOLICITUD
-================================ */
-
-const aprobarSolicitud = (req, res) => {
-
-    const id = req.params.id;
-
-    db.query(
-
-        "SELECT * FROM solicitudes WHERE id=?",
-
-        [id],
-
-        (err, solicitudRes) => {
-
-            if (err)
-                return res.status(500).json(err);
-
-            if (solicitudRes.length === 0) {
-
-                return res.json({
-                    error: "Solicitud no encontrada"
-                });
+    try {
+        const solicitud = await prisma.solicitud.create({
+            data: {
+                nombre,
+                correo,
+                telefono,
+                tipo_habitacion
             }
+        });
 
-            const solicitud = solicitudRes[0];
+        res.json({
+            mensaje: "Solicitud enviada",
+            solicitud
+        });
 
-            /* CREAR CLIENTE */
-
-            db.query(
-
-                "INSERT INTO clientes (nombre, tipo) VALUES (?, ?)",
-
-                [
-                    solicitud.nombre,
-                    solicitud.tipo_habitacion === "VIP"
-                        ? "VIP"
-                        : "Normal"
-                ],
-
-                (err, clienteRes) => {
-
-                    if (err)
-                        return res.status(500).json(err);
-
-                    const clienteId = clienteRes.insertId;
-
-                    /* BUSCAR HABITACION LIBRE */
-
-                    db.query(
-
-                        `SELECT * FROM habitaciones
-                        WHERE tipo=?
-                        AND estado='Libre'
-                        LIMIT 1`,
-
-                        [solicitud.tipo_habitacion],
-
-                        (err, habitacionRes) => {
-
-                            if (err)
-                                return res.status(500).json(err);
-
-                            if (habitacionRes.length === 0) {
-
-                                return res.json({
-                                    error: "No hay habitaciones libres"
-                                });
-                            }
-
-                            const habitacion = habitacionRes[0];
-
-                            /* ASIGNAR HABITACION */
-
-                            db.query(
-
-                                `UPDATE habitaciones
-                                SET estado='ocupada',
-                                cliente_id=?
-                                WHERE id=?`,
-
-                                [
-                                    clienteId,
-                                    habitacion.id
-                                ],
-
-                                (err) => {
-
-                                    if (err)
-                                        return res.status(500).json(err);
-
-                                    /* ELIMINAR SOLICITUD */
-
-                                    db.query(
-
-                                        `DELETE FROM solicitudes
-                                        WHERE id=?`,
-
-                                        [id],
-
-                                        (err) => {
-
-                                            if (err)
-                                                return res.status(500).json(err);
-
-                                            res.json({
-                                                mensaje:
-                                                "Solicitud aprobada y eliminada"
-                                            });
-                                        }
-                                    );
-                                }
-                            );
-                        }
-                    );
-                }
-            );
-        }
-    );
+    } catch (error) {
+        res.status(500).json({
+            error: "Error al crear solicitud"
+        });
+    }
 };
 
-/* ================================
-   RECHAZAR SOLICITUD
-================================ */
+// ================================
+// OBTENER SOLICITUDES
+// ================================
 
-const rechazarSolicitud = (req, res) => {
+const obtenerSolicitudes = async (req, res) => {
+    try {
+        const solicitudes = await prisma.solicitud.findMany({
+            orderBy: {
+                id: 'desc'
+            }
+        });
 
-    const id = req.params.id;
+        res.json(solicitudes);
 
-    db.query(
+    } catch (error) {
+        res.status(500).json({
+            error: "Error al obtener solicitudes"
+        });
+    }
+};
 
-        `DELETE FROM solicitudes
-        WHERE id=?`,
+// ================================
+// APROBAR SOLICITUD
+// ================================
 
-        [id],
+const aprobarSolicitud = async (req, res) => {
 
-        (err) => {
+    const id = Number(req.params.id);
 
-            if (err)
-                return res.status(500).json(err);
+    try {
 
-            res.json({
-                mensaje: "Solicitud rechazada"
+        const solicitud = await prisma.solicitud.findUnique({
+            where: { id }
+        });
+
+        if (!solicitud) {
+            return res.json({
+                error: "Solicitud no encontrada"
             });
         }
-    );
+
+        const cliente = await prisma.cliente.create({
+            data: {
+                nombre: solicitud.nombre,
+                tipo: solicitud.tipo_habitacion === 'VIP'
+                    ? 'VIP'
+                    : solicitud.tipo_habitacion === 'Deluxe'
+                    ? 'Deluxe'
+                    : 'Normal'
+            }
+        });
+
+        const habitacion = await prisma.habitacion.findFirst({
+            where: {
+                tipo: solicitud.tipo_habitacion,
+                estado: 'Libre'
+            }
+        });
+
+        if (!habitacion) {
+            return res.json({
+                error: "No hay habitaciones libres"
+            });
+        }
+
+        await prisma.habitacion.update({
+            where: {
+                id: habitacion.id
+            },
+            data: {
+                estado: 'ocupada',
+                clienteId: cliente.id
+            }
+        });
+
+        await prisma.solicitud.delete({
+            where: { id }
+        });
+
+        res.json({
+            mensaje: "Solicitud aprobada y eliminada"
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            error: "Error al aprobar solicitud"
+        });
+    }
+};
+
+// ================================
+// RECHAZAR SOLICITUD
+// ================================
+
+const rechazarSolicitud = async (req, res) => {
+
+    const id = Number(req.params.id);
+
+    try {
+
+        await prisma.solicitud.delete({
+            where: { id }
+        });
+
+        res.json({
+            mensaje: "Solicitud rechazada"
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: "Error al rechazar solicitud"
+        });
+    }
 };
 
 module.exports = {
-
     crearSolicitud,
     obtenerSolicitudes,
     aprobarSolicitud,
