@@ -1,4 +1,6 @@
-const AUTH_URL = 'http://localhost:3000/auth';
+// Backend actual expone rutas en: /login y /registrar (no /auth/*)
+const AUTH_URL = 'http://localhost:3000';
+
 
 // Cambiar entre pestañas de Login, Registro y Recuperar
 function switchTab(tab) {
@@ -60,10 +62,38 @@ async function handleAuth(event, type, socialName = null) {
         return;
     }
 
+
     if (type === 'recuperar') {
-        showModernAlert("📩 Petición de reinicio enviada a sistemas.", true);
-        switchTab('login');
-        return;
+        const usuarioRecover = document.getElementById('user-recover').value.trim();
+        const emailRecover = document.getElementById('email-recover').value.trim();
+
+        if (!usuarioRecover && !emailRecover) {
+            showModernAlert("⚠️ Ingresa tu usuario o tu correo para recuperar.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${AUTH_URL}/recover`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario: usuarioRecover, correo: emailRecover })
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                showModernAlert(`❌ ${data.error || data.mensaje || 'No existe la cuenta'}`);
+                return;
+            }
+
+            showModernAlert("📩 Solicitud enviada. Revisa tu correo si aplica.", true);
+            switchTab('login');
+            return;
+        } catch (e) {
+            showModernAlert("❌ No hay conexión con el servidor.");
+            return;
+        }
     }
 
     if (type === 'registro') {
@@ -72,7 +102,7 @@ async function handleAuth(event, type, socialName = null) {
         const password = document.getElementById('pass-r').value;
 
         try {
-            const response = await fetch(`${AUTH_URL}/register`, {
+            const response = await fetch(`${AUTH_URL}/registrar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nombre_completo, usuario, password })
@@ -95,39 +125,47 @@ async function handleAuth(event, type, socialName = null) {
         try {
             const response = await fetch(`${AUTH_URL}/login`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ usuario, password })
             });
             const data = await response.json();
-            if (response.ok && data.success) {
+            if (response.ok && (data.success === true || data.mensaje === 'Login correcto')) {
                 showModernAlert("🔑 Acceso autorizado.", true);
-                irAlDashboard(data.nombre_completo);
+                const role = data?.usuario?.role;
+                irAlDashboard(data.nombre_completo || (data.usuario && data.usuario.nombre) || 'Empleado', role);
             } else {
-                showModernAlert(`❌ ${data.error}`);
+                showModernAlert(`❌ ${data.error || data.mensaje || 'Error en login'}`);
             }
+
         } catch (e) { showModernAlert("❌ Servidor inalcanzable."); }
     }
 }
 
 // Transición al menú principal del hotel
-function irAlDashboard(nombreEmpleado) {
+function irAlDashboard(nombreEmpleado, role) {
+
     localStorage.setItem('hotel_sesion_activa', 'true');
     localStorage.setItem('hotel_empleado_nombre', nombreEmpleado);
 
+    if (role) {
+        localStorage.setItem('hotel_empleado_role', role);
+    }
+
     const card = document.getElementById('auth-card');
+
     card.style.opacity = '0';
     card.style.transform = 'translateY(20px)';
     card.style.transition = 'all 0.3s ease';
 
     setTimeout(() => {
-        card.classList.add('hidden');
-        const menu = document.getElementById('main-menu');
-        menu.classList.remove('hidden');
-        
-        // Seteo de textos dinámicos
-        document.getElementById('user-title').innerText = `¡Bienvenido al sistema, ${nombreEmpleado}!`;
-        document.getElementById('avatar-initial').innerText = nombreEmpleado.charAt(0).toUpperCase();
-    }, 300);
+        // Redirigimos al panel correcto según rol.
+        if (role === 'ADMIN') {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'perfil.html';
+        }
+    }, 250);
 }
 
 // Verificación de persistencia al cargar la pestaña
@@ -147,5 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function cerrarSesion() {
     localStorage.removeItem('hotel_sesion_activa');
     localStorage.removeItem('hotel_empleado_nombre');
+    localStorage.removeItem('hotel_empleado_role');
     window.location.reload();
 }
+

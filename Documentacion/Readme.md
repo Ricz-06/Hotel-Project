@@ -53,7 +53,9 @@ El objetivo principal es demostrar un sistema de gestión hotelera con estas fun
 - **MySQL**
 - Base de datos usada: `hotel_db`
 
-> Nota: En el proyecto existe un archivo Prisma, pero la lógica principal visible está implementada con MySQL y `mysql2`.
+> Nota: En el proyecto existe un archivo Prisma y el backend principal (auth, clientes, habitaciones, solicitudes y facturas) se implementa con **Prisma contra PostgreSQL**. Los archivos `.sql` en `backend/sql/` existen como scripts auxiliares.
+
+> Si se quiere ampliar, ver `Documentacion/NuevaDocumentacionPrisma.md`. 
 
 ---
 

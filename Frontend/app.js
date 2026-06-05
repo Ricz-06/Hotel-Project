@@ -2,6 +2,32 @@ const URL = "http://localhost:3000";
 
 const MAX_HABITACIONES = 50;
 
+// Guard de acceso: ADMIN solamente
+async function verificarAccesoAdmin() {
+
+    try {
+        const meRes = await fetch(URL + '/me', { credentials: 'include' });
+        if (!meRes.ok) {
+            window.location.href = 'login.html';
+            return false;
+        }
+
+        const meData = await meRes.json();
+        const role = meData?.user?.role;
+
+        if (role !== 'ADMIN') {
+            window.location.href = 'perfil.html';
+            return false;
+        }
+
+        return true;
+    } catch (e) {
+        window.location.href = 'login.html';
+        return false;
+    }
+}
+
+
 /* 🔥 GLOBAL */
 let habitacionesGlobal = [];
 
@@ -51,7 +77,8 @@ function crearCliente() {
 
 function verClientes() {
 
-    fetch(URL + "/clientes")
+    fetch(URL + "/clientes", { credentials: 'include' })
+
     .then(res => res.json())
     .then(data => {
 
@@ -125,7 +152,8 @@ function verClientes() {
 
 function verSolicitudes() {
 
-    fetch(URL + "/solicitudes")
+    fetch(URL + "/solicitudes", { credentials: 'include' })
+
 
     .then(res => res.json())
 
@@ -314,7 +342,8 @@ function crearHabitacion() {
 
 function verHabitaciones() {
 
-    fetch(URL + "/habitaciones")
+    fetch(URL + "/habitaciones", { credentials: 'include' })
+
     .then(res => res.json())
     .then(data => {
 
@@ -520,9 +549,21 @@ function eliminarHabitacion(id) {
     });
 }
 
+/* ================= LOGOUT ================= */
+
+function cerrarSesion() {
+    // Se borra la info local y se fuerza recarga.
+    localStorage.removeItem('hotel_sesion_activa');
+    localStorage.removeItem('hotel_empleado_nombre');
+    // El backend usa sesión con cookie; al recargar suele quedar invalidada por cierre.
+    // Si tu backend tuviera /logout, idealmente lo llamaríamos aquí.
+    window.location.href = 'login.html';
+}
+
 /* ================= RESET ================= */
 
 function resetearSistema() {
+
 
     const confirmar =
         confirm("⚠️ ¿Seguro que quieres borrar TODO el sistema?");
@@ -530,7 +571,9 @@ function resetearSistema() {
     if (!confirmar) return;
 
     fetch(URL + "/reset", {
-        method: "POST"
+        method: "POST",
+        credentials: 'include'
+
     })
     .then(res => res.json())
     .then(() => {
@@ -544,7 +587,10 @@ function resetearSistema() {
 
 /* ================= AUTO LOAD ================= */
 
-window.onload = function () {
+window.onload = async function () {
+
+    const ok = await verificarAccesoAdmin();
+    if (!ok) return;
 
     verClientes();
 
@@ -552,3 +598,4 @@ window.onload = function () {
 
     verSolicitudes();
 };
+

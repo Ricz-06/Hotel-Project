@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil - Hotel Transilvania</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a class="navbar-brand" href="admin.html">🏨 HOTEL SISTEMA</a>
+      <button class="btn-black" onclick="cerrarSesion()">Logout</button>
+    </div>
+  </nav>
+
+  <main class="container-padding" style="max-width: 1000px;">
+    <section class="admin-card">
+      <h2>👤 Perfil</h2>
+      <div id="perfilResumen" style="margin-top: 10px;">
+        <p><strong>Estado:</strong> <span id="perfilEstado">Cargando...</span></p>
+      </div>
+    </section>
+
+    <section class="admin-card" style="margin-top: 16px;">
+      <h2>📩 Tus Reservaciones (Solicitudes)</h2>
+      <div class="table-container">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Creado</th>
+            </tr>
+          </thead>
+          <tbody id="tablaSolicitudes"></tbody>
+        </table>
+      </div>
+      <p id="sinSolicitudes" style="display:none; margin-top: 12px; color: #666;">No tienes solicitudes registradas con tu correo.</p>
+    </section>
+  </main>
+
+  <script src="perfil.js"></script>
+</body>
+</html>
+

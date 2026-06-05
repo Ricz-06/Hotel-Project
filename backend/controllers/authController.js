@@ -2,41 +2,81 @@ const prisma = require('../prisma/client');
 
 // REGISTRAR
 const registrar = async (req, res) => {
-    const { nombre, correo, password } = req.body;
+    // Front manda (nombre_completo, usuario, password)
+    // DB usa (nombre, correo, password)
+    const {
+        nombre,
+        correo,
+        password,
+        nombre_completo,
+        usuario
+    } = req.body;
+
+    const nombreFinal = (nombre ?? nombre_completo ?? '').trim();
+    // Si viene `usuario` desde el front, lo tratamos como correo
+    const correoFinal = (correo ?? usuario ?? '').trim();
+
+    if (!nombreFinal || !correoFinal || !password) {
+        return res.status(400).json({ success: false, error: 'Faltan datos para registrar' });
+    }
 
     try {
-        const usuario = await prisma.usuario.create({
-            data: { nombre, correo, password },
+        const nuevo = await prisma.usuario.create({
+            data: { nombre: nombreFinal, correo: correoFinal, password },
             select: { id: true, nombre: true, correo: true, role: true }
         });
 
-        res.json({ mensaje: 'Usuario creado', usuario });
+        return res.json({
+            success: true,
+            mensaje: 'Usuario creado',
+            usuario: nuevo,
+            nombre_completo: nuevo.nombre
+        });
 
     } catch (error) {
-        res.status(400).json({ error: 'Correo ya registrado' });
+        return res.status(400).json({ success: false, error: 'Correo ya registrado' });
     }
 };
 
 // LOGIN
 const login = async (req, res) => {
-    const { correo, password } = req.body;
+    // Front manda (usuario, password), DB usa (correo, password)
+    const { correo, usuario, password } = req.body;
+
+    const correoFinal = (correo ?? usuario ?? '').trim();
+    if (!correoFinal || !password) {
+        return res.status(400).json({ success: false, error: 'Faltan datos de login' });
+    }
 
     try {
-        const usuario = await prisma.usuario.findUnique({
-            where: { correo }
+        const usuarioDb = await prisma.usuario.findUnique({
+            where: { correo: correoFinal }
         });
 
-        if (!usuario || usuario.password !== password) {
-            return res.status(401).json({ error: 'Datos incorrectos' });
+        if (!usuarioDb || usuarioDb.password !== password) {
+            return res.status(401).json({ success: false, error: 'Datos incorrectos' });
         }
 
-        // Nunca devolver el password
-        const { password: _, ...usuarioSinPassword } = usuario;
+        // Iniciar sesión (para el panel admin)
+        req.session.user = {
+            id: usuarioDb.id,
+            nombre: usuarioDb.nombre,
+            correo: usuarioDb.correo,
+            role: usuarioDb.role
+        };
 
-        res.json({ mensaje: 'Login correcto', usuario: usuarioSinPassword });
+        // Nunca devolver el password
+        const { password: _, ...usuarioSinPassword } = usuarioDb;
+
+        return res.json({
+            success: true,
+            mensaje: 'Login correcto',
+            usuario: usuarioSinPassword,
+            nombre_completo: usuarioSinPassword.nombre
+        });
 
     } catch (error) {
-        res.status(500).json({ error: 'Error en el servidor' });
+        return res.status(500).json({ success: false, error: 'Error en el servidor' });
     }
 };
 
@@ -45,19 +85,20 @@ const verUsuarios = async (req, res) => {
     try {
         const usuarios = await prisma.usuario.findMany({
             select: {
-                id:     true,
+                id: true,
                 nombre: true,
                 correo: true,
-                role:   true
+                role: true
                 // password: NO se incluye
             }
         });
 
-        res.json(usuarios);
+        return res.json(usuarios);
 
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener usuarios' });
+        return res.status(500).json({ error: 'Error al obtener usuarios' });
     }
 };
 
 module.exports = { registrar, login, verUsuarios };
+
