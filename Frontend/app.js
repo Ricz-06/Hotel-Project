@@ -3,29 +3,24 @@ const URL = "http://localhost:3000";
 const MAX_HABITACIONES = 50;
 
 // Guard de acceso: ADMIN solamente
+// Permite cargar admin.html sin redirecciones desde el frontend.
+// El backend igual aplicará permisos a las rutas protegidas.
 async function verificarAccesoAdmin() {
-
     try {
         const meRes = await fetch(URL + '/me', { credentials: 'include' });
-        if (!meRes.ok) {
-            window.location.href = 'login.html';
-            return false;
-        }
+        if (!meRes.ok) return true;
 
         const meData = await meRes.json();
         const role = meData?.user?.role;
 
-        if (role !== 'ADMIN') {
-            window.location.href = 'perfil.html';
-            return false;
-        }
-
-        return true;
+        // No redirigir aunque no sea ADMIN; solo devolvemos false para que la UI decida.
+        return role === 'ADMIN' || role == null;
     } catch (e) {
-        window.location.href = 'login.html';
-        return false;
+        // Si no hay sesión o falla el backend, igual dejamos cargar admin.html.
+        return true;
     }
 }
+
 
 
 /* 🔥 GLOBAL */
@@ -219,7 +214,8 @@ function aprobarSolicitud(id) {
 
     fetch(URL + "/solicitudes/aprobar/" + id, {
 
-        method: "PUT"
+        method: "PUT",
+        credentials: 'include'
     })
 
     .then(res => res.json())
@@ -242,7 +238,8 @@ function rechazarSolicitud(id) {
 
     fetch(URL + "/solicitudes/rechazar/" + id, {
 
-        method: "PUT"
+        method: "PUT",
+        credentials: 'include'
     })
 
     .then(() => {
@@ -257,6 +254,7 @@ function cambiarTipo(id, nuevoTipo) {
 
     fetch(URL + "/clientes/actualizar", {
         method: "PUT",
+        credentials: 'include',
         headers: {
             "Content-Type": "application/json"
         },
@@ -276,6 +274,7 @@ function eliminarCliente(id) {
 
     fetch(URL + "/clientes/eliminar", {
         method: "POST",
+        credentials: 'include',
         headers: {
             "Content-Type": "application/json"
         },
@@ -310,6 +309,7 @@ function crearHabitacion() {
     fetch(URL + "/habitaciones", {
 
         method: "POST",
+        credentials: 'include',
 
         headers: {
             "Content-Type": "application/json"
@@ -486,6 +486,7 @@ function ocuparHabitacion(numero) {
     fetch(URL + "/habitaciones/ocupar", {
 
         method: "PUT",
+        credentials: 'include',
 
         headers: {
             "Content-Type": "application/json"
@@ -516,6 +517,7 @@ function liberarHabitacion(numero) {
     fetch(URL + "/habitaciones/liberar", {
 
         method: "PUT",
+        credentials: 'include',
 
         headers: {
             "Content-Type": "application/json"
@@ -536,6 +538,7 @@ function eliminarHabitacion(id) {
     fetch(URL + "/habitaciones/eliminar", {
 
         method: "POST",
+        credentials: 'include',
 
         headers: {
             "Content-Type": "application/json"
@@ -585,6 +588,29 @@ function resetearSistema() {
     });
 }
 
+/* ================= HAMBURGUESA ================= */
+
+function toggleMenu() {
+    const dropdown = document.getElementById("hamburgerDropdown");
+    if (dropdown) {
+        dropdown.classList.toggle("show");
+    }
+}
+
+// Cerrar menú al hacer clic fuera
+document.addEventListener("click", function (e) {
+    const btn = document.getElementById("hamburgerBtn");
+    const dropdown = document.getElementById("hamburgerDropdown");
+    if (
+        dropdown &&
+        dropdown.classList.contains("show") &&
+        !btn.contains(e.target) &&
+        !dropdown.contains(e.target)
+    ) {
+        dropdown.classList.remove("show");
+    }
+});
+
 /* ================= AUTO LOAD ================= */
 
 window.onload = async function () {
@@ -598,4 +624,3 @@ window.onload = async function () {
 
     verSolicitudes();
 };
-

@@ -61,7 +61,7 @@ async function handleAuth(event, type, socialName = null) {
     if (event) event.preventDefault();
     
     // URL raíz de tu backend según tu app.listen y app.use('/auth')
-    const AUTH_URL = 'http://localhost:3000/auth';
+    const API_URL = 'http://localhost:3000';
 
     // 📩 FLUJO: RECUPERACIÓN DE CONTRASEÑA (REPORTE)
     if (type === 'recuperar') {

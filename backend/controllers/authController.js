@@ -1,4 +1,7 @@
+const bcrypt = require('bcrypt');
 const prisma = require('../prisma/client');
+
+const SALT_ROUNDS = 10;
 
 // REGISTRAR
 const registrar = async (req, res) => {
@@ -21,8 +24,10 @@ const registrar = async (req, res) => {
     }
 
     try {
+        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
         const nuevo = await prisma.usuario.create({
-            data: { nombre: nombreFinal, correo: correoFinal, password },
+            data: { nombre: nombreFinal, correo: correoFinal, password: hashedPassword, role: 'USER' },
             select: { id: true, nombre: true, correo: true, role: true }
         });
 
@@ -53,7 +58,12 @@ const login = async (req, res) => {
             where: { correo: correoFinal }
         });
 
-        if (!usuarioDb || usuarioDb.password !== password) {
+        if (!usuarioDb) {
+            return res.status(401).json({ success: false, error: 'Datos incorrectos' });
+        }
+
+        const passwordValido = await bcrypt.compare(password, usuarioDb.password);
+        if (!passwordValido) {
             return res.status(401).json({ success: false, error: 'Datos incorrectos' });
         }
 
@@ -101,4 +111,3 @@ const verUsuarios = async (req, res) => {
 };
 
 module.exports = { registrar, login, verUsuarios };
-

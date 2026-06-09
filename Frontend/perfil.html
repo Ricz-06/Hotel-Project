@@ -11,7 +11,10 @@
   <nav class="navbar">
     <div class="container">
       <a class="navbar-brand" href="admin.html">🏨 HOTEL SISTEMA</a>
-      <button class="btn-black" onclick="cerrarSesion()">Logout</button>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a id="adminLink" href="admin.html" style="display: none;" class="btn-gold">Admin</a>
+        <button class="btn-black" onclick="cerrarSesion()">Logout</button>
+      </div>
     </div>
   </nav>
 
@@ -21,6 +24,52 @@
       <div id="perfilResumen" style="margin-top: 10px;">
         <p><strong>Estado:</strong> <span id="perfilEstado">Cargando...</span></p>
       </div>
+    </section>
+
+    <section id="noAuthBox" class="admin-card" style="margin-top: 16px; display: none;">
+      <h2>🔒 Acceso requerido</h2>
+      <p style="color:#666; margin-top:6px;">
+        Tu sesión no es válida o no existe ninguna cuenta iniciada. Necesitas iniciar sesión.
+      </p>
+      <div class="buttons-row" style="margin-top:14px;">
+        <button class="btn-gold" type="button" onclick="window.location.href='login.html'">
+          Ir a Login
+        </button>
+      </div>
+    </section>
+
+
+    <section class="admin-card" style="margin-top: 16px;">
+      <h2>📝 Registro</h2>
+      <p style="color:#666; margin-top:6px;">
+        Crea un acceso para que podamos mostrar tus reservaciones y facturas.
+      </p>
+
+      <div class="input-row" style="margin-top:14px;">
+        <input id="registroNombre" placeholder="Nombre" type="text" />
+        <input id="registroCorreo" placeholder="Correo" type="email" />
+        <input id="registroPassword" placeholder="Contraseña" type="password" />
+      </div>
+
+      <div class="buttons-row" style="margin-top:14px;">
+        <button
+          class="btn-gold"
+          type="button"
+          onclick="handleRegistro()"
+        >
+          Registrarme
+        </button>
+
+        <button
+          class="btn-black"
+          type="button"
+          onclick="window.location.href='index.html'"
+        >
+          Volver al inicio
+        </button>
+      </div>
+
+      <p id="registroMsg" style="display:none; margin-top:12px; color:#666;"></p>
     </section>
 
     <section class="admin-card" style="margin-top: 16px;">
@@ -40,9 +89,47 @@
       </div>
       <p id="sinSolicitudes" style="display:none; margin-top: 12px; color: #666;">No tienes solicitudes registradas con tu correo.</p>
     </section>
+
+    <section class="admin-card" style="margin-top: 16px;">
+      <h2>📄 Tus Facturas</h2>
+      <div class="table-container">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Servicio</th>
+              <th>Total</th>
+              <th>Creado</th>
+            </tr>
+          </thead>
+          <tbody id="tablaFacturas"></tbody>
+        </table>
+      </div>
+      <p id="sinFacturas" style="display:none; margin-top: 12px; color: #666;">No tienes facturas registradas con tu correo.</p>
+    </section>
   </main>
 
+  <script>
+    function handleRegistro() {
+      const msg = document.getElementById('registroMsg');
+      const nombre = document.getElementById('registroNombre').value.trim();
+      const correo = document.getElementById('registroCorreo').value.trim();
+      const pass = document.getElementById('registroPassword').value.trim();
+
+      if (!nombre || !correo || !pass) {
+        msg.style.display = 'block';
+        msg.textContent = 'Completa nombre, correo y contraseña.';
+        return;
+      }
+
+      // No se conecta a backend todavía: por ahora redirige al inicio.
+      window.location.href = 'index.html';
+    }
+  </script>
+
+
   <script src="perfil.js"></script>
+  <script src="roleNav.js"></script>
 </body>
 </html>
-

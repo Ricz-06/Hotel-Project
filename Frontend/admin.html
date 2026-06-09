@@ -46,9 +46,26 @@
                 🏨 HOTEL SISTEMA
             </div>
 
-            <button class="btn-black" onclick="cerrarSesion()">
-                Logout
-            </button>
+            <div class="nav-right">
+                <!-- HAMBURGUESA -->
+                <div class="hamburger-menu">
+                    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()">
+                        ☰
+                    </button>
+                    <div class="hamburger-dropdown" id="hamburgerDropdown">
+                        <a href="index.html">🏠 Inicio</a>
+                        <a href="alojamiento.html">🛏 Alojamiento</a>
+                        <a href="restaurante.html">🍽 Restaurante</a>
+                        <a href="reserva.html">📅 Reservar</a>
+                        <a href="perfil.html">👤 Perfil</a>
+                        <a href="facturacion.html">🧾 Facturación</a>
+                    </div>
+                </div>
+
+                <button class="btn-black" onclick="cerrarSesion()">
+                    Logout
+                </button>
+            </div>
 
         </nav>
 

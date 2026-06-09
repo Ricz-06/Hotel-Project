@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const prisma = require('./client');
 
 async function main() {
@@ -10,12 +11,13 @@ async function main() {
     await prisma.cliente.deleteMany();
     await prisma.usuario.deleteMany();
 
-    // Admin
+    // Admin con password hasheada
+    const hashedPassword = await bcrypt.hash('1234', 10);
     await prisma.usuario.create({
         data: {
             nombre:   'Administrador',
             correo:   'admin@hotel.com',
-            password: '1234',
+            password: hashedPassword,
             role:     'ADMIN'
         }
     });

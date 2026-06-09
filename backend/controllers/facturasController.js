@@ -36,4 +36,26 @@ const obtenerFacturas = async (req, res) => {
     }
 };
 
-module.exports = { crearFactura, obtenerFacturas };
+// ================================
+// OBTENER FACTURAS DE MI CUENTA
+// ================================
+const obtenerMisFacturas = async (req, res) => {
+    try {
+        const { correo } = req.session.user || {};
+
+        if (!correo) {
+            return res.status(400).json({ error: 'No hay correo en sesión' });
+        }
+
+        const facturas = await prisma.factura.findMany({
+            where: { correo },
+            orderBy: { creadoEn: 'desc' }
+        });
+
+        return res.json(facturas);
+    } catch (error) {
+        return res.status(500).json({ error: 'Error al obtener mis facturas' });
+    }
+};
+
+module.exports = { crearFactura, obtenerFacturas, obtenerMisFacturas };

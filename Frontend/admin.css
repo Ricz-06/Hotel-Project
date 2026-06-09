@@ -555,6 +555,78 @@ button:hover{
     flex-wrap:wrap;
 }
 
+/* ================= HAMBURGUESA ================= */
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.hamburger-menu {
+    position: relative;
+}
+
+.hamburger-btn {
+    background: #3a2d20;
+    color: white;
+    font-size: 1.6rem;
+    padding: 10px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2px solid #3a2d20;
+    transition: var(--transition);
+    line-height: 1;
+}
+
+.hamburger-btn:hover {
+    background: #5c4632;
+    border-color: #5c4632;
+    transform: translateY(-2px);
+}
+
+.hamburger-dropdown {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 35px rgba(0,0,0,.18);
+    min-width: 220px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 200;
+    border: 1px solid #e5d8c5;
+}
+
+.hamburger-dropdown.show {
+    display: flex;
+}
+
+.hamburger-dropdown a {
+    text-decoration: none;
+    color: #3a2d20;
+    padding: 14px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    border-bottom: 1px solid #f3e9dc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hamburger-dropdown a:last-child {
+    border-bottom: none;
+}
+
+.hamburger-dropdown a:hover {
+    background: #faf7f2;
+    color: #b8892d;
+    padding-left: 25px;
+}
+
 /* ================= RESPONSIVE ================= */
 
 @media(max-width:900px){

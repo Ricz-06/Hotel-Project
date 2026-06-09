@@ -35,7 +35,8 @@ const {
 
 const {
     crearFactura,
-    obtenerFacturas
+    obtenerFacturas,
+    obtenerMisFacturas
 } = require('./controllers/facturasController');
 
 /* ================= APP ================= */
@@ -54,7 +55,10 @@ app.use(session({
         secure: false
     }
 }));
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(express.json());
 
 
@@ -140,6 +144,10 @@ app.put('/solicitudes/rechazar/:id',    requireAdmin, rechazarSolicitud);
 
 app.get('/facturas',   obtenerFacturas);
 app.post('/facturas',  crearFactura);
+
+// Historial de facturas del usuario autenticado
+app.get('/mis-facturas', requireAuth, obtenerMisFacturas);
+
 
 /* ================= RESET ================= */
 
