@@ -75,29 +75,24 @@ const aprobarSolicitud = async (req, res) => {
             });
         }
 
-        const cliente = await prisma.cliente.create({
-            data: {
-                nombre: solicitud.nombre,
-                tipo: solicitud.tipo_habitacion === 'VIP'
-                    ? 'VIP'
-                    : solicitud.tipo_habitacion === 'Deluxe'
-                    ? 'Deluxe'
-                    : 'Normal'
-            }
-        });
+        // Primero verificar si hay habitación disponible
+const habitacion = await prisma.habitacion.findFirst({
+    where: { tipo: solicitud.tipo_habitacion, estado: 'Libre' }
+});
 
-        const habitacion = await prisma.habitacion.findFirst({
-            where: {
-                tipo: solicitud.tipo_habitacion,
-                estado: 'Libre'
-            }
-        });
+if (!habitacion) {
+    return res.json({ error: "No hay habitaciones libres de ese tipo" });
+}
 
-        if (!habitacion) {
-            return res.json({
-                error: "No hay habitaciones libres"
-            });
-        }
+// Solo crear el cliente si hay habitación disponible
+const cliente = await prisma.cliente.create({
+    data: {
+        nombre: solicitud.nombre,
+        tipo: solicitud.tipo_habitacion === 'VIP' ? 'VIP'
+            : solicitud.tipo_habitacion === 'Deluxe' ? 'Deluxe'
+            : 'Normal'
+    }
+});
 
         await prisma.habitacion.update({
             where: {
