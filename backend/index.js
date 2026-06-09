@@ -46,7 +46,7 @@ const PORT = process.env.PORT || 3000;
 
 // 1. CORS primero — siempre, antes de todo
 app.use(cors({
-    origin: 'http://localhost:5501',
+    origin: ['http://localhost:5501', 'http://127.0.0.1:5501'],
     credentials: true
 }));
 
@@ -173,6 +173,6 @@ app.post('/reset', requireAdmin, async (req, res) => {
 
 /* ================= START ================= */
 
-app.listen(PORT, () => {
-    console.log(`🏨 Hotel Transilvania API corriendo en http://localhost:${PORT}`);
+app.listen(PORT, '127.0.0.1', () => {
+    console.log(`🏨 Hotel Transilvania API corriendo en http://127.0.0.1:${PORT}`);
 });

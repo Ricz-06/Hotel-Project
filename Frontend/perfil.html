@@ -4,132 +4,372 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Perfil - Hotel Transilvania</title>
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css" />
+  <style>
+    /* ===== PERFIL PAGE STYLES ===== */
+    .perfil-hero {
+      background: linear-gradient(135deg, #3a2d20, #24180f);
+      padding: 48px 32px 36px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      border-bottom: 2px solid var(--gold);
+    }
+ 
+    .perfil-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #a07820);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.6rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 4px rgba(212,175,55,0.25);
+    }
+ 
+    .perfil-hero-info h1 {
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+ 
+    .perfil-hero-info p {
+      color: #d6c3aa;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+ 
+    .role-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+ 
+    .role-badge.admin {
+      background: rgba(212,175,55,0.2);
+      color: var(--gold);
+      border: 1px solid rgba(212,175,55,0.4);
+    }
+ 
+    .role-badge.user {
+      background: rgba(255,255,255,0.1);
+      color: #d6c3aa;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+ 
+    /* ===== INFO GRID ===== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+ 
+    .info-item {
+      background: rgba(212,175,55,0.06);
+      border: 1px solid rgba(212,175,55,0.15);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+ 
+    .info-item label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 6px;
+    }
+ 
+    .info-item span {
+      font-size: 1rem;
+      color: var(--dark);
+      font-weight: 600;
+    }
+ 
+    /* ===== NO AUTH BOX ===== */
+    .no-auth-card {
+      background: linear-gradient(135deg, #3a2d20, #24180f);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      display: none;
+    }
+ 
+    .no-auth-card .lock-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+ 
+    .no-auth-card h2 {
+      color: #fff;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+ 
+    .no-auth-card p {
+      color: #d6c3aa;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+ 
+    /* ===== REGISTRO CARD ===== */
+    .registro-card {
+      display: none; /* solo se muestra si no hay sesión */
+    }
+ 
+    .registro-card.visible {
+      display: block;
+    }
+ 
+    /* ===== SECCIÓN TABLAS ===== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+ 
+    .section-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+ 
+    .section-header .count-badge {
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 20px;
+      min-width: 24px;
+      text-align: center;
+    }
+ 
+    .empty-state {
+      text-align: center;
+      padding: 32px 0;
+      color: #aaa;
+      display: none;
+    }
+ 
+    .empty-state .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+ 
+    .empty-state p {
+      font-size: 0.95rem;
+    }
+ 
+    /* ===== ESTADO TAG EN TABLA ===== */
+    .estado-tag {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+ 
+    .estado-tag.pendiente { background: #fef9c3; color: #854d0e; }
+    .estado-tag.aprobada  { background: #dcfce7; color: #166534; }
+    .estado-tag.rechazada { background: #fee2e2; color: #991b1b; }
+ 
+    /* ===== LOADING SKELETON ===== */
+    .loading-pulse {
+      height: 18px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #e8e0d4 25%, #f0e8de 50%, #e8e0d4 75%);
+      background-size: 200% 100%;
+      animation: pulse 1.4s ease infinite;
+      margin: 6px 0;
+    }
+ 
+    @keyframes pulse {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+ 
+    /* ===== ADMIN LINK BTN ===== */
+    #adminLinkBtn {
+      display: none;
+      background: linear-gradient(135deg, var(--gold), #a07820);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+ 
+    #adminLinkBtn:hover { opacity: 0.88; transform: translateY(-1px); }
+ 
+    @media (max-width: 600px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .perfil-hero { flex-direction: column; text-align: center; }
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="container">
-      <a class="navbar-brand" href="admin.html">🏨 HOTEL SISTEMA</a>
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <a id="adminLink" href="admin.html" style="display: none;" class="btn-gold">Admin</a>
+ 
+  <div class="main-content" style="margin-left:0;">
+ 
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="nav-logo">🏨 HOTEL SISTEMA</div>
+      <div class="nav-right">
+        <div class="hamburger-menu">
+          <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()">☰</button>
+          <div class="hamburger-dropdown" id="hamburgerDropdown">
+            <a href="index.html">🏠 Inicio</a>
+            <a href="alojamiento.html">🛏 Alojamiento</a>
+            <a href="restaurante.html">🍽 Restaurante</a>
+            <a href="reserva.html">📅 Reservar</a>
+            <a href="perfil.html">👤 Perfil</a>
+            <a href="facturacion.html">🧾 Facturación</a>
+          </div>
+        </div>
         <button class="btn-black" onclick="cerrarSesion()">Logout</button>
       </div>
+    </nav>
+ 
+    <div style="max-width: 860px; margin: 0 auto; padding: 32px 20px;">
+ 
+      <!-- NO AUTH -->
+      <div id="noAuthBox" class="no-auth-card">
+        <div class="lock-icon">🔒</div>
+        <h2>Sesión no iniciada</h2>
+        <p>Para ver tu perfil, reservaciones y facturas necesitas iniciar sesión.</p>
+        <button class="btn-gold" onclick="window.location.href='login.html'">Ir a Login</button>
+ 
+        <!-- REGISTRO dentro del no-auth -->
+        <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 28px;">
+          <h3 style="color:#d6c3aa; font-size:1rem; margin-bottom:16px;">¿No tienes cuenta? Regístrate</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center;">
+            <input id="registroNombre"   placeholder="Nombre"      type="text"     style="flex:1; min-width:160px; padding:10px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#fff; font-family:inherit;" />
+            <input id="registroCorreo"   placeholder="Correo"      type="email"    style="flex:1; min-width:160px; padding:10px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#fff; font-family:inherit;" />
+            <input id="registroPassword" placeholder="Contraseña"  type="password" style="flex:1; min-width:160px; padding:10px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#fff; font-family:inherit;" />
+          </div>
+          <button class="btn-gold" style="margin-top:16px;" onclick="handleRegistro()">Crear cuenta</button>
+          <p id="registroMsg" style="display:none; margin-top:12px; color:#d6c3aa; font-size:0.9rem;"></p>
+        </div>
+      </div>
+ 
+      <!-- PERFIL AUTENTICADO -->
+      <div id="perfilAutenticado">
+ 
+        <!-- HERO PERFIL -->
+        <div class="admin-card" style="padding:0; overflow:hidden;">
+          <div class="perfil-hero">
+            <div class="perfil-avatar" id="avatarIcon">👤</div>
+            <div class="perfil-hero-info">
+              <h1 id="perfilNombre"><div class="loading-pulse" style="width:180px;"></div></h1>
+              <p id="perfilCorreo"><div class="loading-pulse" style="width:220px;"></div></p>
+              <span id="perfilRoleBadge" class="role-badge user" style="opacity:0;">—</span>
+            </div>
+          </div>
+          <div style="padding: 24px 32px;">
+            <div class="info-grid">
+              <div class="info-item">
+                <label>ID de cuenta</label>
+                <span id="perfilId">—</span>
+              </div>
+              <div class="info-item">
+                <label>Nivel de acceso</label>
+                <span id="perfilAcceso">—</span>
+              </div>
+            </div>
+            <a id="adminLinkBtn" href="admin.html">⚙ Ir al Panel Admin</a>
+          </div>
+        </div>
+ 
+        <!-- SOLICITUDES -->
+        <div class="admin-card" style="margin-top: 20px;">
+          <div class="section-header">
+            <span>📩</span>
+            <h2>Mis Reservaciones</h2>
+            <span class="count-badge" id="countSolicitudes">0</span>
+          </div>
+          <div class="table-container">
+            <table class="tabla">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tipo de habitación</th>
+                  <th>Estado</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="tablaSolicitudes"></tbody>
+            </table>
+          </div>
+          <div id="sinSolicitudes" class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>Aún no tienes reservaciones registradas.</p>
+          </div>
+        </div>
+ 
+        <!-- FACTURAS -->
+        <div class="admin-card" style="margin-top: 20px;">
+          <div class="section-header">
+            <span>📄</span>
+            <h2>Mis Facturas</h2>
+            <span class="count-badge" id="countFacturas">0</span>
+          </div>
+          <div class="table-container">
+            <table class="tabla">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
+                  <th>Total</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="tablaFacturas"></tbody>
+            </table>
+          </div>
+          <div id="sinFacturas" class="empty-state">
+            <div class="empty-icon">🧾</div>
+            <p>Aún no tienes facturas registradas.</p>
+          </div>
+        </div>
+ 
+      </div><!-- /perfilAutenticado -->
     </div>
-  </nav>
-
-  <main class="container-padding" style="max-width: 1000px;">
-    <section class="admin-card">
-      <h2>👤 Perfil</h2>
-      <div id="perfilResumen" style="margin-top: 10px;">
-        <p><strong>Estado:</strong> <span id="perfilEstado">Cargando...</span></p>
-      </div>
-    </section>
-
-    <section id="noAuthBox" class="admin-card" style="margin-top: 16px; display: none;">
-      <h2>🔒 Acceso requerido</h2>
-      <p style="color:#666; margin-top:6px;">
-        Tu sesión no es válida o no existe ninguna cuenta iniciada. Necesitas iniciar sesión.
-      </p>
-      <div class="buttons-row" style="margin-top:14px;">
-        <button class="btn-gold" type="button" onclick="window.location.href='login.html'">
-          Ir a Login
-        </button>
-      </div>
-    </section>
-
-
-    <section class="admin-card" style="margin-top: 16px;">
-      <h2>📝 Registro</h2>
-      <p style="color:#666; margin-top:6px;">
-        Crea un acceso para que podamos mostrar tus reservaciones y facturas.
-      </p>
-
-      <div class="input-row" style="margin-top:14px;">
-        <input id="registroNombre" placeholder="Nombre" type="text" />
-        <input id="registroCorreo" placeholder="Correo" type="email" />
-        <input id="registroPassword" placeholder="Contraseña" type="password" />
-      </div>
-
-      <div class="buttons-row" style="margin-top:14px;">
-        <button
-          class="btn-gold"
-          type="button"
-          onclick="handleRegistro()"
-        >
-          Registrarme
-        </button>
-
-        <button
-          class="btn-black"
-          type="button"
-          onclick="window.location.href='index.html'"
-        >
-          Volver al inicio
-        </button>
-      </div>
-
-      <p id="registroMsg" style="display:none; margin-top:12px; color:#666;"></p>
-    </section>
-
-    <section class="admin-card" style="margin-top: 16px;">
-      <h2>📩 Tus Reservaciones (Solicitudes)</h2>
-      <div class="table-container">
-        <table class="tabla">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Tipo</th>
-              <th>Estado</th>
-              <th>Creado</th>
-            </tr>
-          </thead>
-          <tbody id="tablaSolicitudes"></tbody>
-        </table>
-      </div>
-      <p id="sinSolicitudes" style="display:none; margin-top: 12px; color: #666;">No tienes solicitudes registradas con tu correo.</p>
-    </section>
-
-    <section class="admin-card" style="margin-top: 16px;">
-      <h2>📄 Tus Facturas</h2>
-      <div class="table-container">
-        <table class="tabla">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Cliente</th>
-              <th>Servicio</th>
-              <th>Total</th>
-              <th>Creado</th>
-            </tr>
-          </thead>
-          <tbody id="tablaFacturas"></tbody>
-        </table>
-      </div>
-      <p id="sinFacturas" style="display:none; margin-top: 12px; color: #666;">No tienes facturas registradas con tu correo.</p>
-    </section>
-  </main>
-
-  <script>
-    function handleRegistro() {
-      const msg = document.getElementById('registroMsg');
-      const nombre = document.getElementById('registroNombre').value.trim();
-      const correo = document.getElementById('registroCorreo').value.trim();
-      const pass = document.getElementById('registroPassword').value.trim();
-
-      if (!nombre || !correo || !pass) {
-        msg.style.display = 'block';
-        msg.textContent = 'Completa nombre, correo y contraseña.';
-        return;
-      }
-
-      // No se conecta a backend todavía: por ahora redirige al inicio.
-      window.location.href = 'index.html';
-    }
-  </script>
-
-
+  </div>
+ 
   <script src="perfil.js"></script>
   <script src="roleNav.js"></script>
+  <script>
+    function toggleMenu() {
+      const dropdown = document.getElementById("hamburgerDropdown");
+      if (dropdown) dropdown.classList.toggle("show");
+    }
+    document.addEventListener("click", function(e) {
+      const btn = document.getElementById("hamburgerBtn");
+      const dropdown = document.getElementById("hamburgerDropdown");
+      if (dropdown && dropdown.classList.contains("show") &&
+          !btn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove("show");
+      }
+    });
+  </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const URL = "http://localhost:3000";
+const URL = "http://127.0.0.1:3000";
 
 const MAX_HABITACIONES = 50;
 
@@ -50,10 +50,10 @@ function crearCliente() {
     // app.js línea 50 — falta credentials
 fetch(URL + "/clientes", {
     method: "POST",
+    credentials: 'include',
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nombre, tipo })
-    // ❌ falta: credentials: 'include'
-})
+ })
     .then(() => {
 
         alert("Cliente creado");

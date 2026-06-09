@@ -1,4 +1,4 @@
-const ROLE_URL = "http://localhost:3000";
+const ROLE_URL = "http://127.0.0.1:3000";
 
 function getNavContainer() {
   // Cualquier navbar que quiera usarlo debe tener este id.
