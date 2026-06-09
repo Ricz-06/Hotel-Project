@@ -44,7 +44,13 @@ const {
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cookieParser());
+// 1. CORS primero — siempre, antes de todo
+app.use(cors({
+    origin: 'http://localhost:5501',
+    credentials: true
+}));
+
+// 2. Sesión
 app.use(session({
     secret: process.env.SESSION_SECRET || 'hotel_aurora_secret',
     resave: false,
@@ -52,13 +58,12 @@ app.use(session({
     cookie: {
         httpOnly: true,
         sameSite: 'lax',
-        secure: false
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 24  // 24h — opcional pero recomendado
     }
 }));
-app.use(cors({
-    origin: true,
-    credentials: true
-}));
+
+// 3. Body parser
 app.use(express.json());
 
 

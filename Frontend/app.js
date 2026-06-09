@@ -8,7 +8,7 @@ const MAX_HABITACIONES = 50;
 async function verificarAccesoAdmin() {
     try {
         const meRes = await fetch(URL + '/me', { credentials: 'include' });
-        if (!meRes.ok) return true;
+        if (!meRes.ok) return false;
 
         const meData = await meRes.json();
         const role = meData?.user?.role;
@@ -16,9 +16,8 @@ async function verificarAccesoAdmin() {
         // No redirigir aunque no sea ADMIN; solo devolvemos false para que la UI decida.
         return role === 'ADMIN' || role == null;
     } catch (e) {
-        // Si no hay sesión o falla el backend, igual dejamos cargar admin.html.
-        return true;
-    }
+    return false;
+}
 }
 
 
@@ -48,16 +47,13 @@ function crearCliente() {
         return;
     }
 
-    fetch(URL + "/clientes", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            nombre,
-            tipo
-        })
-    })
+    // app.js línea 50 — falta credentials
+fetch(URL + "/clientes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nombre, tipo })
+    // ❌ falta: credentials: 'include'
+})
     .then(() => {
 
         alert("Cliente creado");
@@ -75,11 +71,16 @@ function verClientes() {
     fetch(URL + "/clientes", { credentials: 'include' })
 
     .then(res => res.json())
-    .then(data => {
+.then(data => {
 
-        let html = "";
+    if (!Array.isArray(data)) {
+        console.error("No autorizado:", data);
+        return;
+    }
 
-        data.forEach(c => {
+    let html = "";
+
+    data.forEach(c => {
 
             let color =
                 c.tipo === "VIP"
@@ -151,12 +152,16 @@ function verSolicitudes() {
 
 
     .then(res => res.json())
+.then(data => {
 
-    .then(data => {
+    if (!Array.isArray(data)) {
+        console.error("No autorizado:", data);
+        return;
+    }
 
-        let html = "";
+    let html = "";
 
-        data.forEach(s => {
+    data.forEach(s => {
 
             html += `
 
