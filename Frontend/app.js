@@ -559,12 +559,12 @@ function eliminarHabitacion(id) {
 
 /* ================= LOGOUT ================= */
 
-function cerrarSesion() {
-    // Se borra la info local y se fuerza recarga.
+async function cerrarSesion() {
+    try {
+        await fetch(URL + '/logout', { method: 'POST', credentials: 'include' });
+    } catch (_) {}
     localStorage.removeItem('hotel_sesion_activa');
-    localStorage.removeItem('hotel_empleado_nombre');
-    // El backend usa sesión con cookie; al recargar suele quedar invalidada por cierre.
-    // Si tu backend tuviera /logout, idealmente lo llamaríamos aquí.
+     localStorage.removeItem('hotel_empleado_nombre');
     window.location.href = 'login.html';
 }
 

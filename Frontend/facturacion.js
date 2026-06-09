@@ -1,62 +1,71 @@
-const URL = "http://localhost:3000";
+const API = "http://127.0.0.1:3000";
 
-console.log("FACTURACION CONECTADA");
+// restaurant.js ya maneja: renderInvoice(), initInvoicePage(),
+// carrito, totales, print y clear.
+// Aquí solo sobreescribimos el submit para guardar en el backend.
 
-const facturaForm =
-document.getElementById("invoiceForm");
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("invoiceForm");
+    if (!form) return;
 
-facturaForm.addEventListener("submit", async (e) => {
+    // Clonar el form para eliminar el listener de restaurant.js
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
 
-    e.preventDefault();
+    newForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    console.log("BOTON FUNCIONA");
+        const cart = readCart();
+        if (!cart || cart.length === 0) {
+            alert("El carrito está vacío.");
+            return;
+        }
 
-    const datos = {
+        const nombre   = document.getElementById("customerName").value.trim();
+        const correo   = document.getElementById("customerEmail").value.trim();
+        const telefono = document.getElementById("customerPhone").value.trim();
 
-        cliente:
-        document.getElementById("customerName").value,
+        if (!nombre || !correo || !telefono) {
+            alert("Completa los datos del cliente.");
+            return;
+        }
 
-        correo:
-        document.getElementById("customerEmail").value,
+        const serviceMode = document.getElementById("invoiceServiceMode").value;
+        const { subtotal, serviceCharge, iva, total } =
+            getCurrentInvoiceTotals(cart, serviceMode);
 
-        telefono:
-        document.getElementById("customerPhone").value,
+        const datos = {
+            cliente:  nombre,
+            correo:   correo,
+            telefono: telefono,
+            servicio: serviceMode,
+            subtotal: parseFloat(subtotal.toFixed(2)),
+            iva:      parseFloat(iva.toFixed(2)),
+            total:    parseFloat(total.toFixed(2))
+        };
 
-        servicio:
-        document.getElementById("invoiceServiceMode").value,
+        try {
+            const res  = await fetch(API + "/facturas", {
+                method:  "POST",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify(datos)
+            });
 
-        subtotal: 100,
+            const data = await res.json();
 
-        iva: 15,
+            if (!res.ok) {
+                alert(data.error || "No se pudo guardar la factura.");
+                return;
+            }
 
-        total: 125
-    };
+            alert("✅ Factura guardada correctamente");
+            clearCart();
+            newForm.reset();
+            renderInvoice();
 
-    console.log(datos);
-
-    try {
-
-        const res = await fetch(URL + "/facturas", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(datos)
-        });
-
-        const data = await res.json();
-
-        console.log(data);
-
-        alert("Factura guardada 🔥");
-
-        facturaForm.reset();
-
-    } catch(error) {
-
-        console.error(error);
-    }
+        } catch (err) {
+            console.error(err);
+            alert("Error al conectar con el servidor.");
+        }
+    });
 });

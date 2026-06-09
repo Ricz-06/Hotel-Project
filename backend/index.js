@@ -171,6 +171,16 @@ app.post('/reset', requireAdmin, async (req, res) => {
     }
 });
 
+
+// Agregar antes del app.listen
+app.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) return res.status(500).json({ error: 'Error al cerrar sesión' });
+        res.clearCookie('connect.sid');
+        res.json({ success: true });
+    });
+});
+
 /* ================= START ================= */
 
 app.listen(PORT, '127.0.0.1', () => {
