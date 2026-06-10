@@ -132,10 +132,15 @@ async function handleAuth(event, type, socialName = null) {
             const data = await response.json().catch(() => ({}));
 
             if (response.ok || data.success) {
-                showModernAlert("🎉 Nuevo miembro del staff registrado con éxito.", true);
-                document.getElementById('form-register')?.reset?.();
-                setTimeout(() => switchTab('login'), 1500);
-            } else {
+    showModernAlert("🎉 Nuevo miembro del staff registrado con éxito.", true);
+    document.getElementById('form-register')?.reset?.();
+
+    localStorage.setItem("correoVerificacion", usuario);
+
+    setTimeout(() => {
+        window.location.href = "verificar.html";
+    }, 1500);
+} else {
                 showModernAlert(`❌ ${data.mensaje || data.error || 'Error al registrar'}`);
             }
         } catch (error) {

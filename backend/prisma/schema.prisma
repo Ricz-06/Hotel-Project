@@ -42,6 +42,9 @@ model Usuario {
   password String
   role     Role        @default(USER)
 
+  verificado         Boolean @default(false)
+  codigoVerificacion String?
+
   @@map("usuarios")
 }
 

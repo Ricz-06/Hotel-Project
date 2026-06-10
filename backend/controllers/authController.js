@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const prisma = require('../prisma/client');
+const { enviarCodigo } = require('../utils/email');
 
 const SALT_ROUNDS = 10;
 
@@ -17,15 +18,31 @@ const registrar = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-        const nuevo = await prisma.usuario.create({
-            data: {
-                nombre: nombreFinal,
-                correo: correoFinal,
-                password: hashedPassword,
-                role: 'USER'
-            },
-            select: { id: true, nombre: true, correo: true, role: true }
-        });
+const codigo = Math.floor(
+    100000 + Math.random() * 900000
+).toString();
+
+const nuevo = await prisma.usuario.create({
+    data: {
+        nombre: nombreFinal,
+        correo: correoFinal,
+        password: hashedPassword,
+        role: 'USER',
+        verificado: false,
+        codigoVerificacion: codigo
+    },
+    select: {
+        id: true,
+        nombre: true,
+        correo: true,
+        role: true
+    }
+});
+
+console.log("ENVIANDO CORREO A:", correoFinal);
+console.log("CODIGO:", codigo);
+
+await enviarCodigo(correoFinal, codigo);
 
         return res.json({
             success: true,
@@ -35,8 +52,14 @@ const registrar = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(400).json({ success: false, error: 'Correo ya registrado' });
-    }
+    console.error("ERROR REGISTRANDO:");
+    console.error(error);
+
+    return res.status(400).json({
+        success: false,
+        error: error.message
+    });
+}
 };
 
 // LOGIN

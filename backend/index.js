@@ -81,6 +81,52 @@ app.get('/', (req, res) => {
 app.post('/registrar',   registrar);
 app.post('/login',       login);
 app.get('/db-users',     verUsuarios);
+app.post('/verificar', async (req, res) => {
+
+    const { correo, codigo } = req.body;
+
+    try {
+
+        const usuario = await prisma.usuario.findUnique({
+            where: { correo }
+        });
+
+        if (!usuario) {
+            return res.status(404).json({
+                success: false,
+                error: 'Usuario no encontrado'
+            });
+        }
+
+        if (usuario.codigoVerificacion !== codigo) {
+            return res.status(400).json({
+                success: false,
+                error: 'Código incorrecto'
+            });
+        }
+
+        await prisma.usuario.update({
+            where: { correo },
+            data: {
+                verificado: true,
+                codigoVerificacion: null
+            }
+        });
+
+        return res.json({
+            success: true,
+            mensaje: 'Cuenta verificada correctamente'
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            error: 'Error del servidor'
+        });
+    }
+});
 
 const { requireRole, requireAuth } = require('./middleware/authMiddleware');
 const requireAdmin = requireRole('ADMIN');
