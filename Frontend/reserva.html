@@ -118,8 +118,18 @@
                 <input type="email" id="correo" class="form-control" placeholder="Correo" required>
               </div>
               <div class="col-md-6">
-                <input type="text" id="telefono" class="form-control" placeholder="Teléfono" required>
-              </div>
+              <div class="input-group">
+              <span class="input-group-text">+505</span>
+              <input
+                type="tel"
+                id="telefono"
+                class="form-control"
+                placeholder="88887777"
+                maxlength="8"
+                required
+              >
+            </div>
+          </div>
               <div class="col-md-6">
                 <select id="tipo" class="form-select" required>
                   <option value="Sencilla">Sencilla</option>
@@ -162,7 +172,7 @@ document.getElementById("formReserva").addEventListener("submit", async (e) => {
   const datos = {
     nombre: document.getElementById("nombre").value,
     correo: document.getElementById("correo").value,
-    telefono: document.getElementById("telefono").value,
+    telefono: "+505" + document.getElementById("telefono").value,
     tipo_habitacion: document.getElementById("tipo").value
   };
 
@@ -183,6 +193,17 @@ document.getElementById("formReserva").addEventListener("submit", async (e) => {
   e.target.reset();
 });
 </script>
+<script>
+const telefono = document.getElementById("telefono");
+
+telefono.addEventListener("input", () => {
+  telefono.value = telefono.value
+    .replace(/\D/g, "")
+    .slice(0, 8);
+});
+</script>
+
+<script src="reservas.js"></script>
 
 <script src="reservas.js"></script>
 
