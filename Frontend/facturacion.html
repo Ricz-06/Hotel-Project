@@ -115,20 +115,20 @@
           <div class="invoice-totals">
             <div class="d-flex justify-content-between">
               <span>Subtotal</span>
-              <strong id="invoiceSubtotal">$0.00</strong>
+              <strong id="invoiceSubtotal">C$0.00</strong>
             </div>
             <div class="d-flex justify-content-between">
               <span>Cargo por servicio</span>
-              <strong id="invoiceService">$0.00</strong>
+              <strong id="invoiceService">C$0.00</strong>
             </div>
             <div class="d-flex justify-content-between">
               <span>IVA (15%)</span>
-              <strong id="invoiceIva">$0.00</strong>
+              <strong id="invoiceIva">C$0.00</strong>
             </div>
             <hr>
             <div class="d-flex justify-content-between fs-5">
               <span>Total</span>
-              <strong id="invoiceTotal">$0.00</strong>
+              <strong id="invoiceTotal">C$0.00</strong>
             </div>
           </div>
 
@@ -155,6 +155,31 @@
 <script src="script.js"></script>
 <script src="facturacion.js"></script>
 <script src="roleNav.js"></script>
+
+<script>
+async function autoRellenarFacturacion() {
+    const token = localStorage.getItem('hotel_token');
+    if (!token) return;
+
+    try {
+        const res = await fetch("http://127.0.0.1:3000/me", {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.ok) {
+            const { user } = await res.json();
+            const nameInput = document.getElementById('customerName');
+            const emailInput = document.getElementById('customerEmail');
+            
+            if(nameInput && user.nombre) nameInput.value = user.nombre;
+            if(emailInput && user.correo) emailInput.value = user.correo;
+        }
+    } catch (e) {
+        console.log("Sesión no iniciada.");
+    }
+}
+window.addEventListener('DOMContentLoaded', autoRellenarFacturacion);
+</script>
 
 </body>
 </html>

@@ -1,26 +1,20 @@
 const URL = "http://127.0.0.1:3000";
-
 const MAX_HABITACIONES = 50;
 
-// Guard de acceso: ADMIN solamente
-// Permite cargar admin.html sin redirecciones desde el frontend.
-// El backend igual aplicará permisos a las rutas protegidas.
+// =========================================================
+// 🔒 GUARD DE ACCESO: VERIFICACIÓN JWT
+// =========================================================
 async function verificarAccesoAdmin() {
-    try {
-        const meRes = await fetch(URL + '/me', { credentials: 'include' });
-        if (!meRes.ok) return false;
+    const token = localStorage.getItem('hotel_token');
+    const role = localStorage.getItem('hotel_user_role');
 
-        const meData = await meRes.json();
-        const role = meData?.user?.role;
-
-        // No redirigir aunque no sea ADMIN; solo devolvemos false para que la UI decida.
-        return role === 'ADMIN' || role == null;
-    } catch (e) {
-    return false;
+    // Si ni siquiera hay token o el rol no es ADMIN, rebota de inmediato al login
+    if (!token || role !== 'ADMIN') {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
 }
-}
-
-
 
 /* 🔥 GLOBAL */
 let habitacionesGlobal = [];
@@ -35,10 +29,20 @@ function obtenerServiciosPorTipo(tipo) {
     return SERVICIOS_POR_TIPO[tipo] || SERVICIOS_POR_TIPO.Normal;
 }
 
+// =========================================================
+// 🛠️ FUNCIÓN AUXILIAR: AGREGAR EL TOKEN AUTOMÁTICAMENTE
+// =========================================================
+function getHeaders() {
+    const token = localStorage.getItem('hotel_token');
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    };
+}
+
 /* ================= CLIENTES ================= */
 
 function crearCliente() {
-
     const nombre = document.getElementById("nombre").value;
     const tipo = document.getElementById("tipo").value;
 
@@ -47,19 +51,18 @@ function crearCliente() {
         return;
     }
 
-    // app.js línea 50 — falta credentials
-fetch(URL + "/clientes", {
-    method: "POST",
-    credentials: 'include',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nombre, tipo })
- })
+    fetch(URL + "/clientes", {
+        method: "POST",
+        headers: getHeaders(), // 🔑 Token inyectado
+        body: JSON.stringify({ nombre, tipo })
+    })
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
+        return res.json();
+    })
     .then(() => {
-
         alert("Cliente creado");
-
         document.getElementById("nombre").value = "";
-
         verClientes();
     });
 }
@@ -67,208 +70,129 @@ fetch(URL + "/clientes", {
 /* ================= VER CLIENTES ================= */
 
 function verClientes() {
+    fetch(URL + "/clientes", { 
+        method: "GET",
+        headers: getHeaders() // 🔑 Token inyectado
+    })
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
+        return res.json();
+    })
+    .then(data => {
+        if (!Array.isArray(data)) {
+            console.error("No autorizado o error de formato:", data);
+            return;
+        }
 
-    fetch(URL + "/clientes", { credentials: 'include' })
-
-    .then(res => res.json())
-.then(data => {
-
-    if (!Array.isArray(data)) {
-        console.error("No autorizado:", data);
-        return;
-    }
-
-    let html = "";
-
-    data.forEach(c => {
-
-            let color =
-                c.tipo === "VIP"
-                ? "vip"
-                : "normal";
+        let html = "";
+        data.forEach(c => {
+            let color = c.tipo === "VIP" ? "vip" : "normal";
 
             html += `
                 <tr>
-
                     <td>${c.id}</td>
-
                     <td>${c.nombre}</td>
-
                     <td>
                         <span class="${color}">
                             ${c.tipo}
                         </span>
                     </td>
-
                     <td>
-
-                        <button
-                            class="normal-btn"
-                            onclick="cambiarTipo(${c.id}, 'Normal')"
-                        >
-                            Normal
-                        </button>
-
-                        <button
-                            class="deluxe-btn"
-                            onclick="cambiarTipo(${c.id}, 'Deluxe')"
-                        >
-                            Deluxe
-                        </button>
-
-                        <button
-                            class="vip-btn"
-                            onclick="cambiarTipo(${c.id}, 'VIP')"
-                        >
-                            VIP
-                        </button>
-
+                        <button class="normal-btn" onclick="cambiarTipo(${c.id}, 'Normal')">Normal</button>
+                        <button class="deluxe-btn" onclick="cambiarTipo(${c.id}, 'Deluxe')">Deluxe</button>
+                        <button class="vip-btn" onclick="cambiarTipo(${c.id}, 'VIP')">VIP</button>
                     </td>
-
                     <td>
-
-                        <button
-                            class="delete-btn"
-                            onclick="eliminarCliente(${c.id})"
-                        >
-                            🗑
-                        </button>
-
+                        <button class="delete-btn" onclick="eliminarCliente(${c.id})">🗑</button>
                     </td>
-
                 </tr>
             `;
         });
-
         document.getElementById("listaClientes").innerHTML = html;
     });
 }
 
-/* ================= SOLICITUDES ================= */
+/* ================= VER SOLICITUDES ================= */
 
 function verSolicitudes() {
+    fetch(URL + "/solicitudes", { 
+        method: "GET",
+        headers: getHeaders() // 🔑 Token inyectado
+    })
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
+        return res.json();
+    })
+    .then(data => {
+        if (!Array.isArray(data)) {
+            console.error("No autorizado o error de formato:", data);
+            return;
+        }
 
-    fetch(URL + "/solicitudes", { credentials: 'include' })
-
-
-    .then(res => res.json())
-.then(data => {
-
-    if (!Array.isArray(data)) {
-        console.error("No autorizado:", data);
-        return;
-    }
-
-    let html = "";
-
-    data.forEach(s => {
-
+        let html = "";
+        data.forEach(s => {
             html += `
-
             <tr>
-
                 <td>${s.id}</td>
-
                 <td>${s.nombre}</td>
-
                 <td>${s.correo}</td>
-
                 <td>${s.tipo_habitacion}</td>
-
                 <td>${s.estado}</td>
-
                 <td>
-
-                    <button
-                    class="btn-gold"
-
-                    onclick="aprobarSolicitud(${s.id})">
-
-                    ✔
-
-                    </button>
-
+                    <button class="btn-gold" onclick="aprobarSolicitud(${s.id})">✔</button>
                 </td>
-
                 <td>
-
-                    <button
-                    class="btn-danger"
-
-                    onclick="rechazarSolicitud(${s.id})">
-
-                    ✖
-
-                    </button>
-
+                    <button class="btn-danger" onclick="rechazarSolicitud(${s.id})">✖</button>
                 </td>
-
             </tr>
             `;
         });
-
-        document.getElementById(
-            "listaSolicitudes"
-        ).innerHTML = html;
+        document.getElementById("listaSolicitudes").innerHTML = html;
     });
 }
 
-/* ================= APROBAR ================= */
+/* ================= APROBAR SOLICITUD ================= */
 
 function aprobarSolicitud(id) {
-
     fetch(URL + "/solicitudes/aprobar/" + id, {
-
         method: "PUT",
-        credentials: 'include'
+        headers: getHeaders() // 🔑 Token inyectado
     })
-
-    .then(res => res.json())
-
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
+        return res.json();
+    })
     .then(data => {
-
         alert(data.mensaje || data.error);
-
         verSolicitudes();
-
         verClientes();
-
         verHabitaciones();
     });
 }
 
-/* ================= RECHAZAR ================= */
+/* ================= RECHAZAR SOLICITUD ================= */
 
 function rechazarSolicitud(id) {
-
     fetch(URL + "/solicitudes/rechazar/" + id, {
-
         method: "PUT",
-        credentials: 'include'
+        headers: getHeaders() // 🔑 Token inyectado
     })
-
-    .then(() => {
-
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
         verSolicitudes();
     });
 }
 
-/* ================= CAMBIAR TIPO ================= */
+/* ================= CAMBIAR TIPO CLIENTE ================= */
 
 function cambiarTipo(id, nuevoTipo) {
-
     fetch(URL + "/clientes/actualizar", {
         method: "PUT",
-        credentials: 'include',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            id,
-            tipo: nuevoTipo
-        })
+        headers: getHeaders(), // 🔑 Token inyectado
+        body: JSON.stringify({ id, tipo: nuevoTipo })
     })
-    .then(() => {
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
         verClientes();
     });
 }
@@ -276,50 +200,37 @@ function cambiarTipo(id, nuevoTipo) {
 /* ================= ELIMINAR CLIENTE ================= */
 
 function eliminarCliente(id) {
-
     fetch(URL + "/clientes/eliminar", {
         method: "POST",
-        credentials: 'include',
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getHeaders(), // 🔑 Token inyectado
         body: JSON.stringify({ id })
     })
-    .then(() => {
-
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
         verClientes();
         verHabitaciones();
     });
 }
 
-/* ================= HABITACIONES ================= */
+/* ================= CREAR HABITACION ================= */
 
 function crearHabitacion() {
-
     const numero = document.getElementById("numero").value;
     const tipo = document.getElementById("tipoHab").value;
 
     if (!numero || !tipo) {
-
         alert("Faltan datos");
         return;
     }
 
     if (habitacionesGlobal.length >= MAX_HABITACIONES) {
-
         alert(`Solo se permiten ${MAX_HABITACIONES} habitaciones máximo`);
         return;
     }
 
     fetch(URL + "/habitaciones", {
-
         method: "POST",
-        credentials: 'include',
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
+        headers: getHeaders(), // 🔑 Token inyectado
         body: JSON.stringify({
             numero,
             tipo,
@@ -328,17 +239,15 @@ function crearHabitacion() {
         })
     })
     .then(async (res) => {
-
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
-
             alert(data.error || "No se pudo crear la habitación");
             return;
         }
 
         document.getElementById("numero").value = "";
-
         verHabitaciones();
     });
 }
@@ -346,192 +255,107 @@ function crearHabitacion() {
 /* ================= VER HABITACIONES ================= */
 
 function verHabitaciones() {
-
-    fetch(URL + "/habitaciones", { credentials: 'include' })
-
-    .then(res => res.json())
+    fetch(URL + "/habitaciones", { 
+        method: "GET",
+        headers: getHeaders() // 🔑 Token inyectado
+    })
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
+        return res.json();
+    })
     .then(data => {
-
-        habitacionesGlobal = data;
-
-        renderHabitaciones(data);
-
-        actualizarContadores(data);
+        if (Array.isArray(data)) {
+            habitacionesGlobal = data;
+            renderHabitaciones(data);
+            actualizarContadores(data);
+        }
     });
 }
 
 /* ================= RENDER HABITACIONES ================= */
 
 function renderHabitaciones(data) {
-
     let html = "";
-
-        data.forEach(h => {
-
-        let estadoClass =
-            h.estado === "ocupada"
-            ? "ocupada"
-            : "libre";
-
-        const servicios = Array.isArray(h.servicios)
-            ? h.servicios
-            : obtenerServiciosPorTipo(h.tipo);
+    data.forEach(h => {
+        let estadoClass = h.estado === "ocupada" ? "ocupada" : "libre";
+        const servicios = Array.isArray(h.servicios) ? h.servicios : obtenerServiciosPorTipo(h.tipo);
 
         html += `
             <div class="card ${estadoClass}">
-
                 <h3>🛏 ${h.numero}</h3>
-
-                <p>
-                    <strong>Tipo:</strong>
-                    ${h.tipo}
-                </p>
-
-                <p>
-                    <strong>Estado:</strong>
-                    ${h.estado}
-                </p>
-
-                <p>
-                    👤 ${h.cliente || "Libre"}
-                </p>
-
+                <p><strong>Tipo:</strong> ${h.tipo}</p>
+                <p><strong>Estado:</strong> ${h.estado}</p>
+                <p>👤 ${h.cliente || "Libre"}</p>
                 <ul class="room-services">
                     ${servicios.map(servicio => `<li>${servicio}</li>`).join("")}
                 </ul>
-
                 <div class="room-buttons">
-
-                    <button
-                        class="btn-ocupar"
-                        onclick="ocuparHabitacion(${h.numero})"
-                    >
-                        Ocupar
-                    </button>
-
-                    <button
-                        class="btn-liberar"
-                        onclick="liberarHabitacion(${h.numero})"
-                    >
-                        Liberar
-                    </button>
-
-                    <button
-                        class="btn-delete"
-                        onclick="eliminarHabitacion(${h.id})"
-                    >
-                        Eliminar
-                    </button>
-
+                    <button class="btn-ocupar" onclick="ocuparHabitacion(${h.numero})">Ocupar</button>
+                    <button class="btn-liberar" onclick="liberarHabitacion(${h.numero})">Liberar</button>
+                    <button class="btn-delete" onclick="eliminarHabitacion(${h.id})">Eliminar</button>
                 </div>
-
             </div>
         `;
     });
-
     document.getElementById("habitaciones").innerHTML = html;
 }
 
 /* ================= CONTADORES ================= */
 
 function actualizarContadores(data) {
-
-    let libres =
-        data.filter(h => h.estado !== "ocupada").length;
-
-    let ocupadas =
-        data.filter(h => h.estado === "ocupada").length;
+    let libres = data.filter(h => h.estado !== "ocupada").length;
+    let ocupadas = data.filter(h => h.estado === "ocupada").length;
 
     document.getElementById("libres").innerText = libres;
-
     document.getElementById("ocupadas").innerText = ocupadas;
 }
 
 /* ================= FILTROS ================= */
 
 function filtrar(tipo) {
-
-    if (tipo === "todas") {
-
-        renderHabitaciones(habitacionesGlobal);
-    }
-
-    if (tipo === "libre") {
-
-        renderHabitaciones(
-            habitacionesGlobal.filter(
-                h => h.estado !== "ocupada"
-            )
-        );
-    }
-
-    if (tipo === "ocupada") {
-
-        renderHabitaciones(
-            habitacionesGlobal.filter(
-                h => h.estado === "ocupada"
-            )
-        );
-    }
+    if (tipo === "todas") renderHabitaciones(habitacionesGlobal);
+    if (tipo === "libre") renderHabitaciones(habitacionesGlobal.filter(h => h.estado !== "ocupada"));
+    if (tipo === "ocupada") renderHabitaciones(habitacionesGlobal.filter(h => h.estado === "ocupada"));
 }
 
-/* ================= OCUPAR ================= */
+/* ================= OCUPAR HABITACION ================= */
 
 function ocuparHabitacion(numero) {
-
-    const cliente_id =
-        document.getElementById("clienteAsignado").value;
+    const cliente_id = document.getElementById("clienteAsignado").value;
 
     if (!cliente_id) {
-
         alert("Falta ID cliente");
         return;
     }
 
     fetch(URL + "/habitaciones/ocupar", {
-
         method: "PUT",
-        credentials: 'include',
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            numero,
-            cliente_id
-        })
+        headers: getHeaders(), // 🔑 Token inyectado
+        body: JSON.stringify({ numero, cliente_id })
     })
-    .then(res => res.json())
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
+        return res.json();
+    })
     .then(data => {
-
         if (data.error) {
-
             alert(data.error);
             return;
         }
-
         verHabitaciones();
     });
 }
 
-/* ================= LIBERAR ================= */
+/* ================= LIBERAR HABITACION ================= */
 
 function liberarHabitacion(numero) {
-
     fetch(URL + "/habitaciones/liberar", {
-
         method: "PUT",
-        credentials: 'include',
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
+        headers: getHeaders(), // 🔑 Token inyectado
         body: JSON.stringify({ numero })
     })
-    .then(() => {
-
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
         verHabitaciones();
     });
 }
@@ -539,20 +363,13 @@ function liberarHabitacion(numero) {
 /* ================= ELIMINAR HABITACION ================= */
 
 function eliminarHabitacion(id) {
-
     fetch(URL + "/habitaciones/eliminar", {
-
         method: "POST",
-        credentials: 'include',
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
+        headers: getHeaders(), // 🔑 Token inyectado
         body: JSON.stringify({ id })
     })
-    .then(() => {
-
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
         verHabitaciones();
     });
 }
@@ -561,33 +378,36 @@ function eliminarHabitacion(id) {
 
 async function cerrarSesion() {
     try {
-        await fetch(URL + '/logout', { method: 'POST', credentials: 'include' });
+        await fetch(URL + '/logout', { 
+            method: 'POST', 
+            headers: getHeaders() 
+        });
     } catch (_) {}
-    localStorage.removeItem('hotel_sesion_activa');
-     localStorage.removeItem('hotel_empleado_nombre');
+    
+    // Limpieza absoluta de almacenamiento JWT local
+    localStorage.removeItem('hotel_token');
+    localStorage.removeItem('hotel_user_role');
+    localStorage.removeItem('hotel_empleado_nombre');
+    localStorage.removeItem('hotel_auth');
     window.location.href = 'login.html';
 }
 
-/* ================= RESET ================= */
+/* ================= RESET TOTAL ================= */
 
 function resetearSistema() {
-
-
-    const confirmar =
-        confirm("⚠️ ¿Seguro que quieres borrar TODO el sistema?");
-
+    const confirmar = confirm("⚠️ ¿Seguro que quieres borrar TODO el sistema?");
     if (!confirmar) return;
 
     fetch(URL + "/reset", {
         method: "POST",
-        credentials: 'include'
-
+        headers: getHeaders() // 🔑 Token inyectado
     })
-    .then(res => res.json())
+    .then(res => {
+        if (res.status === 401 || res.status === 403) window.location.href = 'login.html';
+        return res.json();
+    })
     .then(() => {
-
         alert("Sistema reiniciado 🚀");
-
         verClientes();
         verHabitaciones();
     });
@@ -597,21 +417,13 @@ function resetearSistema() {
 
 function toggleMenu() {
     const dropdown = document.getElementById("hamburgerDropdown");
-    if (dropdown) {
-        dropdown.classList.toggle("show");
-    }
+    if (dropdown) dropdown.classList.toggle("show");
 }
 
-// Cerrar menú al hacer clic fuera
 document.addEventListener("click", function (e) {
     const btn = document.getElementById("hamburgerBtn");
     const dropdown = document.getElementById("hamburgerDropdown");
-    if (
-        dropdown &&
-        dropdown.classList.contains("show") &&
-        !btn.contains(e.target) &&
-        !dropdown.contains(e.target)
-    ) {
+    if (dropdown && dropdown.classList.contains("show") && !btn.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.remove("show");
     }
 });
@@ -619,13 +431,12 @@ document.addEventListener("click", function (e) {
 /* ================= AUTO LOAD ================= */
 
 window.onload = async function () {
-
+    // Primero validamos de forma síncrona/local que sea ADMIN
     const ok = await verificarAccesoAdmin();
     if (!ok) return;
 
+    // Levantamos los datos reales enviando los tokens correspondientes
     verClientes();
-
     verHabitaciones();
-
     verSolicitudes();
 };

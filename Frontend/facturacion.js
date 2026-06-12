@@ -1,18 +1,43 @@
 const API = "http://127.0.0.1:3000";
 
-// restaurant.js ya maneja: renderInvoice(), initInvoicePage(),
-// carrito, totales, print y clear.
-// Aquí solo sobreescribimos el submit para guardar en el backend.
+// Función para vaciar el carrito (solución al error)
+function clearCart() {
+    localStorage.removeItem("ht_restaurant_cart");
+}
+
+// Función para leer el carrito desde localStorage
+function readCart() {
+    return JSON.parse(localStorage.getItem("ht_restaurant_cart")) || [];
+}
+
+// Lógica de cálculos ajustada para Nicaragua (IVA 15% + 10% servicio)
+function getCurrentInvoiceTotals(cart) {
+    const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    
+    const serviceCharge = subtotal * 0.10; 
+    const iva = (subtotal + serviceCharge) * 0.15;
+    const total = subtotal + serviceCharge + iva;
+
+    // Actualizamos el DOM solo si los elementos existen en el HTML
+    if(document.getElementById('invoiceSubtotal')) document.getElementById('invoiceSubtotal').textContent = `C$${subtotal.toFixed(2)}`;
+    if(document.getElementById('invoiceService')) document.getElementById('invoiceService').textContent = `C$${serviceCharge.toFixed(2)}`;
+    if(document.getElementById('invoiceIva')) document.getElementById('invoiceIva').textContent = `C$${iva.toFixed(2)}`;
+    if(document.getElementById('invoiceTotal')) document.getElementById('invoiceTotal').textContent = `C$${total.toFixed(2)}`;
+
+    return { subtotal, serviceCharge, iva, total };
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("invoiceForm");
     if (!form) return;
 
-    // Clonar el form para eliminar el listener de restaurant.js
-    const newForm = form.cloneNode(true);
-    form.parentNode.replaceChild(newForm, form);
+    // Inicializar totales al cargar la página
+    const cart = readCart();
+    if (cart.length > 0) {
+        getCurrentInvoiceTotals(cart);
+    }
 
-    newForm.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const cart = readCart();
@@ -31,8 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const serviceMode = document.getElementById("invoiceServiceMode").value;
-        const { subtotal, serviceCharge, iva, total } =
-            getCurrentInvoiceTotals(cart, serviceMode);
+        const { subtotal, iva, total } = getCurrentInvoiceTotals(cart);
 
         const datos = {
             cliente:  nombre,
@@ -58,10 +82,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            alert("✅ Factura guardada correctamente");
+            alert("✅ Factura generada y guardada correctamente");
+            
+            // Ahora la función existe y no dará error
             clearCart();
-            newForm.reset();
-            renderInvoice();
+            form.reset();
+            
+            // Recargar vista o limpiar totales
+            if (typeof renderInvoice === 'function') renderInvoice();
+            else window.location.reload(); 
 
         } catch (err) {
             console.error(err);

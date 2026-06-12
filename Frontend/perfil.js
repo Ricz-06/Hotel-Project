@@ -1,10 +1,20 @@
 const API = "http://127.0.0.1:3000";
 
+// Helper para obtener las cabeceras con el token
+const getHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${localStorage.getItem('hotel_token') || ''}`
+});
+
 /* ===== LOGOUT ===== */
 async function cerrarSesion() {
   try {
-    await fetch(API + '/logout', { method: 'POST', credentials: 'include' });
+    await fetch(API + '/logout', { 
+        method: 'POST', 
+        headers: getHeaders() 
+    });
   } catch (_) {}
+  localStorage.removeItem('hotel_token');
   window.location.href = 'login.html';
 }
 
@@ -27,7 +37,6 @@ async function handleRegistro() {
   try {
     const res  = await fetch(API + '/registrar', {
       method: 'POST',
-      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, correo, password })
     });
@@ -55,7 +64,7 @@ async function handleRegistro() {
 
 /* ===== HELPERS ===== */
 function mostrarNoAuth() {
-  document.getElementById('noAuthBox').style.display        = 'block';
+  document.getElementById('noAuthBox').style.display         = 'block';
   document.getElementById('perfilAutenticado').style.display = 'none';
 }
 
@@ -68,9 +77,13 @@ function estadoTag(estado) {
 
 /* ===== CARGAR PERFIL ===== */
 async function cargarPerfil() {
+  if (!localStorage.getItem('hotel_token')) { mostrarNoAuth(); return; }
+
   try {
+    const headers = getHeaders();
+
     /* — /me — */
-    const meRes = await fetch(API + '/me', { credentials: 'include' });
+    const meRes = await fetch(API + '/me', { method: 'GET', headers });
     if (!meRes.ok) { mostrarNoAuth(); return; }
 
     const meData = await meRes.json();
@@ -93,18 +106,24 @@ async function cargarPerfil() {
       document.getElementById('adminLinkBtn').style.display = 'inline-block';
     }
 
-    /* — Solicitudes — */
-    const solRes  = await fetch(API + '/mis-solicitudes', { credentials: 'include' });
-    const solData = solRes.ok ? await solRes.json() : { solicitudes: [] };
+    /* — Solicitudes y Habitaciones — */
+    const solRes = await fetch(API + '/mis-solicitudes', { method: 'GET', headers });
+    const solData = solRes.ok ? await solRes.json() : { solicitudes: [], habitacionesOcupadas: [] };
+    
     const solicitudes = Array.isArray(solData.solicitudes) ? solData.solicitudes : [];
+    const habitaciones = Array.isArray(solData.habitacionesOcupadas) ? solData.habitacionesOcupadas : [];
 
-    document.getElementById('countSolicitudes').textContent = solicitudes.length;
+    document.getElementById('countSolicitudes').textContent = solicitudes.length + habitaciones.length;
 
-    if (solicitudes.length === 0) {
+    if (solicitudes.length === 0 && habitaciones.length === 0) {
       document.getElementById('sinSolicitudes').style.display = 'block';
     } else {
+      document.getElementById('sinSolicitudes').style.display = 'none';
       const tbody = document.getElementById('tablaSolicitudes');
-      tbody.innerHTML = solicitudes.map(s => {
+      
+      let html = "";
+      // Solicitudes
+      html += solicitudes.map(s => {
         const fecha = s.creadoEn ? new Date(s.creadoEn).toLocaleDateString('es-NI') : '—';
         return `
           <tr>
@@ -114,34 +133,51 @@ async function cargarPerfil() {
             <td>${fecha}</td>
           </tr>`;
       }).join('');
+
+      // Habitaciones asignadas manualmente
+      html += habitaciones.map(h => `
+        <tr>
+          <td>Habitación ${h.numero}</td>
+          <td>${h.tipo}</td>
+          <td><span class="estado-tag aprobada">Asignada</span></td>
+          <td>—</td>
+        </tr>`).join('');
+      
+      tbody.innerHTML = html;
     }
 
     /* — Facturas — */
-    const facRes  = await fetch(API + '/mis-facturas', { credentials: 'include' });
-    const facData = facRes.ok ? await facRes.json() : [];
-    const facturas = Array.isArray(facData) ? facData : [];
+    const facRes = await fetch(API + '/mis-facturas', { method: 'GET', headers });
+    
+    if (facRes.ok) {
+        const facturas = await facRes.json();
+        const listaFacturas = Array.isArray(facturas) ? facturas : [];
+        document.getElementById('countFacturas').textContent = listaFacturas.length;
 
-    document.getElementById('countFacturas').textContent = facturas.length;
-
-    if (facturas.length === 0) {
-      document.getElementById('sinFacturas').style.display = 'block';
+        if (listaFacturas.length === 0) {
+            document.getElementById('sinFacturas').style.display = 'block';
+        } else {
+            const tbody = document.getElementById('tablaFacturas');
+            tbody.innerHTML = listaFacturas.map(f => {
+                const fecha = f.creadoEn ? new Date(f.creadoEn).toLocaleDateString('es-NI') : '—';
+                const total = typeof f.total === 'number' ? `$${f.total.toFixed(2)}` : (f.total ?? '—');
+                return `
+                  <tr>
+                    <td>#${f.id}</td>
+                    <td>${f.cliente ?? '—'}</td>
+                    <td>${f.servicio ?? '—'}</td>
+                    <td><strong>${total}</strong></td>
+                    <td>${fecha}</td>
+                  </tr>`;
+            }).join('');
+        }
     } else {
-      const tbody = document.getElementById('tablaFacturas');
-      tbody.innerHTML = facturas.map(f => {
-        const fecha = f.creadoEn ? new Date(f.creadoEn).toLocaleDateString('es-NI') : '—';
-        const total = typeof f.total === 'number' ? `$${f.total.toFixed(2)}` : (f.total ?? '—');
-        return `
-          <tr>
-            <td>#${f.id}</td>
-            <td>${f.cliente ?? '—'}</td>
-            <td>${f.servicio ?? '—'}</td>
-            <td><strong>${total}</strong></td>
-            <td>${fecha}</td>
-          </tr>`;
-      }).join('');
+        console.error("Error al cargar facturas");
+        document.getElementById('sinFacturas').style.display = 'block';
     }
 
   } catch (e) {
+    console.error(e);
     mostrarNoAuth();
   }
 }

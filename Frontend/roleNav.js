@@ -1,7 +1,6 @@
 const ROLE_URL = "http://127.0.0.1:3000";
 
 function getNavContainer() {
-  // Cualquier navbar que quiera usarlo debe tener este id.
   return document.getElementById('navItems');
 }
 
@@ -19,11 +18,22 @@ async function aplicarRolEnNavbar() {
   const root = getNavContainer();
   if (!root) return;
 
-  // Por defecto: normal (sin admin)
   hideAllAdminLinks(root);
 
+  // 1. Obtener el token del almacenamiento local
+  const token = localStorage.getItem('hotel_token');
+  if (!token) return; // Si no hay token, no intentamos llamar a /me
+
   try {
-    const meRes = await fetch(ROLE_URL + '/me', { credentials: 'include' });
+    // 2. Realizar el fetch enviando la cabecera Authorization
+    const meRes = await fetch(`${ROLE_URL}/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // <-- AQUÍ ESTABA EL ERROR
+        'Content-Type': 'application/json'
+      }
+    });
+
     if (!meRes.ok) return;
 
     const meData = await meRes.json();
@@ -33,9 +43,8 @@ async function aplicarRolEnNavbar() {
       showAdminLinks(root);
     }
   } catch (e) {
-    // Si falla la consulta, dejamos el navbar como Normal
+    console.error("Error al obtener rol:", e);
   }
 }
 
 window.addEventListener('DOMContentLoaded', aplicarRolEnNavbar);
-

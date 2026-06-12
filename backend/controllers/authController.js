@@ -1,9 +1,13 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const prisma = require('../prisma/client');
 
 const SALT_ROUNDS = 10;
+const JWT_SECRET = process.env.JWT_SECRET || 'TuClaveSecretaSuperSegura';
 
-// REGISTRAR
+// ==========================================
+// 1. REGISTRAR USUARIO
+// ==========================================
 const registrar = async (req, res) => {
     const { nombre, correo, password, nombre_completo, usuario } = req.body;
 
@@ -15,6 +19,14 @@ const registrar = async (req, res) => {
     }
 
     try {
+        const usuarioExistente = await prisma.usuario.findUnique({
+            where: { correo: correoFinal }
+        });
+
+        if (usuarioExistente) {
+            return res.status(400).json({ success: false, error: 'El correo ya está registrado' });
+        }
+
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
         const nuevo = await prisma.usuario.create({
@@ -27,25 +39,36 @@ const registrar = async (req, res) => {
             select: { id: true, nombre: true, correo: true, role: true }
         });
 
+        // ✅ CORREGIDO: se agrega "nombre" al payload del JWT
+        const token = jwt.sign(
+            { id: nuevo.id, correo: nuevo.correo, role: nuevo.role, nombre: nuevo.nombre },
+            JWT_SECRET,
+            { expiresIn: '8h' }
+        );
+
         return res.json({
             success: true,
-            mensaje: 'Usuario creado',
+            mensaje: 'Usuario creado con éxito',
+            token: token,
             usuario: nuevo,
             nombre_completo: nuevo.nombre
         });
 
     } catch (error) {
-        return res.status(400).json({ success: false, error: 'Correo ya registrado' });
+        console.error('❌ Error real en el proceso de registro:', error);
+        return res.status(500).json({ success: false, error: 'Error interno al procesar el registro en la base de datos' });
     }
 };
 
-// LOGIN
+// ==========================================
+// 2. INICIAR SESIÓN (LOGIN)
+// ==========================================
 const login = async (req, res) => {
-    const { correo, usuario, password } = req.body;
+    const { usuario, correo, password } = req.body;
     const correoFinal = (correo ?? usuario ?? '').trim();
 
     if (!correoFinal || !password) {
-        return res.status(400).json({ success: false, error: 'Faltan datos de login' });
+        return res.status(400).json({ success: false, error: 'Faltan datos para iniciar sesión' });
     }
 
     try {
@@ -54,52 +77,50 @@ const login = async (req, res) => {
         });
 
         if (!usuarioDb) {
-            return res.status(401).json({ success: false, error: 'Datos incorrectos' });
+            return res.status(401).json({ success: false, error: 'Usuario o contraseña incorrectos' });
         }
 
-        const passwordValido = await bcrypt.compare(password, usuarioDb.password);
-
-        if (!passwordValido) {
-            return res.status(401).json({ success: false, error: 'Datos incorrectos' });
+        const passwordCorrecto = await bcrypt.compare(password, usuarioDb.password);
+        if (!passwordCorrecto) {
+            return res.status(401).json({ success: false, error: 'Usuario o contraseña incorrectos' });
         }
 
-        // Guardar sesión y esperar confirmación antes de responder
-        req.session.user = {
-            id: usuarioDb.id,
-            nombre: usuarioDb.nombre,
-            correo: usuarioDb.correo,
-            role: usuarioDb.role
-        };
+        // ✅ CORREGIDO: se agrega "nombre" al payload del JWT
+        const token = jwt.sign(
+            {
+                id: usuarioDb.id,
+                correo: usuarioDb.correo,
+                role: usuarioDb.role,
+                nombre: usuarioDb.nombre
+            },
+            JWT_SECRET,
+            { expiresIn: '8h' }
+        );
 
-        req.session.save((err) => {
-            if (err) {
-                console.error("Error guardando sesión:", err);
-                return res.status(500).json({ success: false, error: 'Error de sesión' });
-            }
+        console.log('=================================');
+        console.log(`JWT EMITIDO EXITOSAMENTE PARA: ${usuarioDb.correo}`);
+        console.log(`ROL DEL USUARIO: ${usuarioDb.role}`);
+        console.log('=================================');
 
-            console.log("=================================");
-            console.log("SESION GUARDADA Y CONFIRMADA");
-            console.log("SESSION ID:", req.sessionID);
-            console.log("USER:", req.session.user);
-            console.log("=================================");
+        const { password: _, ...usuarioSinPassword } = usuarioDb;
 
-            const { password: _, ...usuarioSinPassword } = usuarioDb;
-
-            return res.json({
-                success: true,
-                mensaje: 'Login correcto',
-                usuario: usuarioSinPassword,
-                nombre_completo: usuarioSinPassword.nombre
-            });
+        return res.json({
+            success: true,
+            mensaje: 'Login correcto',
+            token: token,
+            usuario: usuarioSinPassword,
+            nombre_completo: usuarioSinPassword.nombre
         });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, error: 'Error en el servidor' });
+        console.error('❌ Error en login controlador:', error);
+        return res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };
 
-// VER USUARIOS
+// ==========================================
+// 3. VER USUARIOS registrados
+// ==========================================
 const verUsuarios = async (req, res) => {
     try {
         const usuarios = await prisma.usuario.findMany({
@@ -107,6 +128,7 @@ const verUsuarios = async (req, res) => {
         });
         return res.json(usuarios);
     } catch (error) {
+        console.error('❌ Error al obtener usuarios:', error);
         return res.status(500).json({ error: 'Error al obtener usuarios' });
     }
 };

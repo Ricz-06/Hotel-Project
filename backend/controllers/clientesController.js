@@ -15,10 +15,12 @@ const obtenerClientes = async (req, res) => {
 // CREAR CLIENTE
 const crearCliente = async (req, res) => {
     const { nombre, tipo } = req.body;
+    // Normalizamos el tipo para evitar problemas con Enums de Prisma
+    const tipoNormalizado = tipo ? tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase() : 'Normal';
 
     try {
         const cliente = await prisma.cliente.create({
-            data: { nombre, tipo: tipo || 'Normal' }
+            data: { nombre, tipo: tipoNormalizado }
         });
         res.json(cliente);
     } catch (error) {
@@ -31,17 +33,17 @@ const eliminarCliente = async (req, res) => {
     const { id } = req.body;
 
     try {
-        // Liberar habitaciones del cliente antes de eliminarlo
-        await prisma.habitacion.updateMany({
-            where: { clienteId: Number(id) },
-            data:  { clienteId: null, estado: 'Libre' }
-        });
+        await prisma.$transaction([
+            prisma.habitacion.updateMany({
+                where: { clienteId: Number(id) },
+                data:  { clienteId: null, estado: 'Libre' }
+            }),
+            prisma.cliente.delete({
+                where: { id: Number(id) }
+            })
+        ]);
 
-        await prisma.cliente.delete({
-            where: { id: Number(id) }
-        });
-
-        res.json({ mensaje: 'Cliente eliminado' });
+        res.json({ mensaje: 'Cliente eliminado correctamente' });
     } catch (error) {
         res.status(500).json({ error: 'Error al eliminar cliente' });
     }

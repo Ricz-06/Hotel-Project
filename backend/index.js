@@ -1,188 +1,126 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors    = require('cors');
 const prisma  = require('./prisma/client');
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
 
-const {
-    registrar,
-    login,
-    verUsuarios
-} = require('./controllers/authController');
+const { requireAuth, requireRole } = require('./middleware/authMiddleware');
+const requireAdmin = requireRole('ADMIN');
 
-
-const {
-    obtenerClientes,
-    crearCliente,
-    eliminarCliente,
-    actualizarCliente
-} = require('./controllers/clientesController');
-
-const {
-    obtenerHabitaciones,
-    crearHabitacion,
-    ocuparHabitacion,
-    liberarHabitacion,
-    eliminarHabitacion
-} = require('./controllers/habitacionesController');
-
-const {
-    crearSolicitud,
-    obtenerSolicitudes,
-    aprobarSolicitud,
-    rechazarSolicitud
-} = require('./controllers/solicitudesController');
-
-const {
-    crearFactura,
-    obtenerFacturas,
-    obtenerMisFacturas
-} = require('./controllers/facturasController');
+const { registrar, login, verUsuarios } = require('./controllers/authController');
+const { obtenerClientes, crearCliente, eliminarCliente, actualizarCliente } = require('./controllers/clientesController');
+const { obtenerHabitaciones, crearHabitacion, ocuparHabitacion, liberarHabitacion, eliminarHabitacion } = require('./controllers/habitacionesController');
+const { crearSolicitud, obtenerSolicitudes, aprobarSolicitud, rechazarSolicitud } = require('./controllers/solicitudesController');
+const { crearFactura, obtenerFacturas, obtenerMisFacturas } = require('./controllers/facturasController');
 
 /* ================= APP ================= */
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// 1. CORS primero — siempre, antes de todo
+// ✅ CORS CORREGIDO: acepta cualquier puerto de Live Server y también sin origin (Postman, etc.)
+const allowedOrigins = [
+    'http://localhost:5500', 'http://127.0.0.1:5500',
+    'http://localhost:5501', 'http://127.0.0.1:5501',
+    'http://localhost:5502', 'http://127.0.0.1:5502',
+    'http://localhost:5503', 'http://127.0.0.1:5503',
+];
+
 app.use(cors({
-    origin: ['http://localhost:5501', 'http://127.0.0.1:5501'],
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORS bloqueado para origen: ' + origin));
+        }
+    },
     credentials: true
 }));
 
-// 2. Sesión
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'hotel_aurora_secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 24  // 24h — opcional pero recomendado
-    }
-}));
-
-// 3. Body parser
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+/* ================= RUTAS DE AUTENTICACIÓN ================= */
 
-// 🟢 SOLUCIÓN AL "CANNOT GET /": Ruta inicial de bienvenida
-app.get('/', (req, res) => {
-    res.json({
-        mensaje: "🏨 API de Hotel Transilvania corriendo con éxito",
-        estado: "Online",
-        fecha: new Date()
-    });
-});
+app.post('/register', registrar);
+app.post('/login',    login);
+app.get('/usuarios',  requireAdmin, verUsuarios);
 
-/* ================= AUTH ================= */
-
-app.post('/registrar',   registrar);
-app.post('/login',       login);
-app.get('/db-users',     verUsuarios);
-
-const { requireRole, requireAuth } = require('./middleware/authMiddleware');
-const requireAdmin = requireRole('ADMIN');
-
-const recoverRoutes = require('./Routes/recover');
-app.use('/', recoverRoutes);
-
-
-
-
-/* ================= PERFIL ================= */
 app.get('/me', requireAuth, (req, res) => {
-    res.json({
-        user: req.session.user
-    });
+    return res.json({ user: req.user });
 });
 
-app.get('/mis-solicitudes', requireAuth, async (req, res) => {
-    try {
-        const correo = req.session.user?.correo;
-        if (!correo) {
-            return res.status(400).json({ error: 'No hay correo en sesión' });
-        }
-
-        const solicitudes = await prisma.solicitud.findMany({
-            where: { correo },
-            orderBy: { id: 'desc' }
-        });
-
-        res.json({ solicitudes });
-    } catch (e) {
-        res.status(500).json({ error: 'Error al obtener solicitudes del usuario' });
-    }
+// ✅ RUTA /logout AGREGADA (faltaba completamente, causaba 404 silencioso)
+app.post('/logout', requireAuth, (req, res) => {
+    return res.json({ success: true, mensaje: 'Sesión cerrada correctamente' });
 });
-
-
 
 /* ================= CLIENTES ================= */
 
-app.get('/clientes', requireAdmin, obtenerClientes);
-app.post('/clientes', requireAdmin, crearCliente);
+app.get('/clientes',           requireAdmin, obtenerClientes);
+app.post('/clientes',          requireAdmin, crearCliente);
 app.post('/clientes/eliminar', requireAdmin, eliminarCliente);
 app.put('/clientes/actualizar', requireAdmin, actualizarCliente);
 
-
 /* ================= HABITACIONES ================= */
 
-app.get('/habitaciones',            obtenerHabitaciones);
+app.get('/habitaciones',           obtenerHabitaciones);
+app.post('/habitaciones',          requireAdmin, crearHabitacion);
+app.put('/habitaciones/ocupar',    requireAdmin, ocuparHabitacion);
+app.put('/habitaciones/liberar',   requireAdmin, liberarHabitacion);
+app.post('/habitaciones/eliminar', requireAdmin, eliminarHabitacion);
 
-app.post('/habitaciones',           requireAdmin, crearHabitacion);
-app.put('/habitaciones/ocupar',     requireAdmin, ocuparHabitacion);
-app.put('/habitaciones/liberar',    requireAdmin, liberarHabitacion);
-app.post('/habitaciones/eliminar',  requireAdmin, eliminarHabitacion);
+/* ================= SOLICITUDES / RESERVAS ================= */
 
+app.post('/solicitudes', crearSolicitud);
+app.get('/solicitudes',  requireAdmin, obtenerSolicitudes);
+app.put('/solicitudes/aprobar/:id',  requireAdmin, aprobarSolicitud);
+app.put('/solicitudes/rechazar/:id', requireAdmin, rechazarSolicitud);
 
-/* ================= SOLICITUDES ================= */
+app.get('/mis-solicitudes', requireAuth, async (req, res) => {
+    try {
+        const sol = await prisma.solicitud.findMany({
+            where: { correo: req.user.correo }
+        });
 
-app.get('/solicitudes',                 requireAdmin, obtenerSolicitudes);
-app.post('/solicitudes',                crearSolicitud);
+        // ✅ CORREGIDO: req.user.nombre ahora existe porque se incluye en el JWT
+        const hab = await prisma.habitacion.findMany({
+            where: {
+                cliente: {
+                    nombre: req.user.nombre
+                }
+            }
+        });
 
-app.put('/solicitudes/aprobar/:id',     requireAdmin, aprobarSolicitud);
-app.put('/solicitudes/rechazar/:id',    requireAdmin, rechazarSolicitud);
-
+        res.json({
+            solicitudes: sol,
+            habitacionesOcupadas: hab
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener datos' });
+    }
+});
 
 /* ================= FACTURAS ================= */
 
-app.get('/facturas',   obtenerFacturas);
-app.post('/facturas',  crearFactura);
-
-// Historial de facturas del usuario autenticado
+app.get('/facturas',     requireAdmin, obtenerFacturas);
+app.post('/facturas',    crearFactura);
 app.get('/mis-facturas', requireAuth, obtenerMisFacturas);
 
-
-/* ================= RESET ================= */
-
+/* ================= RESET TOTAL DEL SISTEMA ================= */
 
 app.post('/reset', requireAdmin, async (req, res) => {
-
     try {
         await prisma.factura.deleteMany();
         await prisma.solicitud.deleteMany();
         await prisma.habitacion.deleteMany();
         await prisma.cliente.deleteMany();
-
-        res.json({ mensaje: 'Sistema reiniciado' });
+        res.json({ mensaje: 'Sistema reiniciado exitosamente' });
     } catch (error) {
-        res.status(500).json({ error: 'Error al reiniciar' });
+        res.status(500).json({ error: 'Error al reiniciar la base de datos' });
     }
 });
 
-
-// Agregar antes del app.listen
-app.post('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) return res.status(500).json({ error: 'Error al cerrar sesión' });
-        res.clearCookie('connect.sid');
-        res.json({ success: true });
-    });
-});
-
-/* ================= START ================= */
-
-app.listen(PORT, '127.0.0.1', () => {
-    console.log(`🏨 Hotel Transilvania API corriendo en http://127.0.0.1:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en http://127.0.0.1:${PORT}`);
 });

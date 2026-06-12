@@ -19,11 +19,12 @@ const crearFactura = async (req, res) => {
 
         res.json({ mensaje: 'Factura guardada', factura });
     } catch (error) {
+        console.error("Error al guardar factura:", error);
         res.status(500).json({ error: 'Error al guardar factura' });
     }
 };
 
-// OBTENER FACTURAS
+// OBTENER FACTURAS (Admin)
 const obtenerFacturas = async (req, res) => {
     try {
         const facturas = await prisma.factura.findMany({
@@ -32,6 +33,7 @@ const obtenerFacturas = async (req, res) => {
 
         res.json(facturas);
     } catch (error) {
+        console.error("Error al obtener facturas:", error);
         res.status(500).json({ error: 'Error al obtener facturas' });
     }
 };
@@ -41,19 +43,22 @@ const obtenerFacturas = async (req, res) => {
 // ================================
 const obtenerMisFacturas = async (req, res) => {
     try {
-        const { correo } = req.session.user || {};
+        // CORRECCIÓN: Usamos req.user porque es donde el middleware 'requireAuth' 
+        // guarda la información tras verificar el token JWT.
+        const correoUsuario = req.user ? req.user.correo : null;
 
-        if (!correo) {
-            return res.status(400).json({ error: 'No hay correo en sesión' });
+        if (!correoUsuario) {
+            return res.status(401).json({ error: 'No autorizado: correo no encontrado' });
         }
 
         const facturas = await prisma.factura.findMany({
-            where: { correo },
+            where: { correo: correoUsuario },
             orderBy: { creadoEn: 'desc' }
         });
 
         return res.json(facturas);
     } catch (error) {
+        console.error("Error al obtener mis facturas:", error);
         return res.status(500).json({ error: 'Error al obtener mis facturas' });
     }
 };

@@ -1,11 +1,9 @@
 // =========================================================================
-// 🌐 CONFIGURACIÓN: URL raíz de tu backend modularizada con el prefijo /auth
+// 🌐 CONFIGURACIÓN: URL raíz de tu backend modularizada
 // =========================================================================
-console.log("LOGIN JS CARGADO");
+console.log("LOGIN JS CARGADO CORRECCIONES JWT");
 
-const AUTH_URL = 'http://127.0.0.1:3000';
-
-
+const API_URL = 'http://127.0.0.1:3000';
 
 // =========================================================
 // 🟢 1. MANEJO DE PESTAÑAS (LOGIN / REGISTRO / RECUPERACIÓN)
@@ -23,18 +21,18 @@ function switchTab(tab) {
     if (registerForm) registerForm.classList.add('hidden');
     if (recoverForm) recoverForm.classList.add('hidden');
     if (tabL) tabL.classList.remove('active');
-    if(tabR) tabR.classList.remove('active');
-    if(oauth) oauth.classList.remove('hidden');
+    if (tabR) tabR.classList.remove('active');
+    if (oauth) oauth.classList.remove('hidden');
 
     if (tab === 'login') {
         if (loginForm) loginForm.classList.remove('hidden');
-        if(tabL) tabL.classList.add('active');
+        if (tabL) tabL.classList.add('active');
     } else if (tab === 'register') {
         if (registerForm) registerForm.classList.remove('hidden');
-        if(tabR) tabR.classList.add('active');
+        if (tabR) tabR.classList.add('active');
     } else if (tab === 'recover') {
         if (recoverForm) recoverForm.classList.remove('hidden');
-        if(oauth) oauth.classList.add('hidden'); // Ocultar redes sociales en recuperación
+        if (oauth) oauth.classList.add('hidden'); // Ocultar redes sociales en recuperación
     }
 }
 
@@ -63,12 +61,9 @@ function showModernAlert(message, isSuccess = false) {
 }
 
 // =========================================================
-// 🔥 2. LÓGICA CENTRALIZADA DE PETICIONES (CORREGIDA)
+// 🔥 2. LÓGICA CENTRALIZADA DE PETICIONES (CONEXIÓN BACKEND)
 // =========================================================
 async function handleAuth(event, type, socialName = null) {
-    // Permite crear un usuario admin solo desde el frontend en modo debug
-    // (no recomendado en producción). Se basa en un input con el id 'admin-code'.
-
     if (event) event.preventDefault();
 
     if (type === 'oauth') {
@@ -77,6 +72,7 @@ async function handleAuth(event, type, socialName = null) {
         return;
     }
 
+    // 📩 FLUJO: RECUPERACIÓN DE CONTRASEÑA
     if (type === 'recuperar') {
         const usuarioRecover = document.getElementById('user-recover').value.trim();
         const emailRecover = document.getElementById('email-recover').value.trim();
@@ -87,10 +83,8 @@ async function handleAuth(event, type, socialName = null) {
         }
 
         try {
-            // Apunta a http://localhost:3000/recover
-            const response = await fetch(`${AUTH_URL}/recover`, {
+            const response = await fetch(`${API_URL}/recover`, {
                 method: 'POST',
-                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ usuario: usuarioRecover, correo: emailRecover })
             });
@@ -111,20 +105,25 @@ async function handleAuth(event, type, socialName = null) {
         }
     }
 
-    // 🔒 REGISTRO REAL DE EMPLEADOS
+    // 🔒 FLUJO: REGISTRO REAL (CONEXIÓN A PRISMA BACKEND)
     if (type === 'registro') {
         const nombre_completo = document.getElementById('name-r').value.trim();
-        const usuario = document.getElementById('user-r').value.trim();
+        const usuario = document.getElementById('user-r').value.trim(); // Correo del input HTML
         const password = document.getElementById('pass-r').value;
 
+        if (!nombre_completo || !usuario || !password) {
+            showModernAlert("⚠️ Por favor, rellena todos los campos de registro.");
+            return;
+        }
+
         try {
-            // ✨ SE MODIFICA: Ahora apunta correctamente a http://localhost:3000/auth/register
-            const response = await fetch(`${AUTH_URL}/registrar`, {
+            // Mapeamos 'correo' para que coincida exactamente con tu controlador en Express
+            const response = await fetch(`${API_URL}/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     nombre: nombre_completo,
-                    usuario: usuario,
+                    correo: usuario,
                     password: password
                 })
             });
@@ -134,6 +133,14 @@ async function handleAuth(event, type, socialName = null) {
             if (response.ok || data.success) {
                 showModernAlert("🎉 Nuevo miembro del staff registrado con éxito.", true);
                 document.getElementById('form-register')?.reset?.();
+                
+                // Si tu backend genera automáticamente el Token JWT al registrarse
+                if (data.token) {
+                    localStorage.setItem('hotel_token', data.token);
+                    localStorage.setItem('hotel_user_role', data.usuario?.role || 'USER');
+                    localStorage.setItem('hotel_empleado_nombre', data.nombre_completo || nombre_completo);
+                }
+
                 setTimeout(() => switchTab('login'), 1500);
             } else {
                 showModernAlert(`❌ ${data.mensaje || data.error || 'Error al registrar'}`);
@@ -143,11 +150,9 @@ async function handleAuth(event, type, socialName = null) {
         }
     }
 
-    // -----------------------------------------------------
-    // 🔑 FLUJO: LOGIN REAL (CONEXIÓN AL BACKEND)
-    // -----------------------------------------------------
+    // 🔑 FLUJO: LOGIN REAL (CONEXIÓN JWT Y REDIRECCIÓN POR ROL)
     if (type === 'login') {
-        const usuario = document.getElementById('user-l').value.trim();
+        const usuario = document.getElementById('user-l').value.trim(); // Correo introducido
         const password = document.getElementById('pass-l').value;
 
         if (!usuario || !password) {
@@ -156,12 +161,11 @@ async function handleAuth(event, type, socialName = null) {
         }
 
         try {
-            const response = await fetch(`${AUTH_URL}/login`, {
+            const response = await fetch(`${API_URL}/login`, {
                 method: 'POST',
-                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    usuario: usuario,
+                    correo: usuario,
                     password: password 
                 })
             });
@@ -171,19 +175,26 @@ async function handleAuth(event, type, socialName = null) {
             if (response.ok || data.success) {
                 showModernAlert("🔑 Credenciales verificadas. Accediendo...", true);
 
-                // ✅ Verificar el rol del usuario para decidir a dónde redirigir
-                const role = (data?.usuario?.role ?? '').toString().toUpperCase();
-                const nombreEmpleado = data.nombre_completo || data.usuario || "Staff";
+                // 💾 ALMACENAMIENTO SEGURO DE DATOS Y JWT EN LOCALSTORAGE
+                localStorage.setItem('hotel_token', data.token);
+                localStorage.setItem('hotel_user_role', data.usuario?.role || 'USER');
+                
+                const nombreEmpleado = data.nombre_completo || data.usuario?.nombre || "Staff";
+                localStorage.setItem('hotel_empleado_nombre', nombreEmpleado);
 
+                // Disparar la transición visual animada integrada en el HTML
                 irAlDashboard(nombreEmpleado);
 
+                // 🔀 REDIRECCIÓN SEGÚN EL ROL (ADMIN -> admin.html | USER/CLIENTE -> index.html)
+                const role = (data?.usuario?.role ?? 'USER').toString().toUpperCase();
                 setTimeout(() => {
                     if (role === 'ADMIN') {
                         window.location.href = 'admin.html';
                     } else {
                         window.location.href = 'index.html';
                     }
-                }, 200);
+                }, 1200); // Pequeño margen para dejar lucir la transición visual
+
             } else {
                 showModernAlert(`❌ ${data.mensaje || data.error || 'Usuario o contraseña incorrectos.'}`);
             }
@@ -232,4 +243,13 @@ function irAlDashboard(finalName) {
             }
         }, 30);
     }, 500);
+}
+
+// Función auxiliar de apoyo para limpiar la persistencia local
+function cerrarSesion() {
+    localStorage.removeItem('hotel_token');
+    localStorage.removeItem('hotel_user_role');
+    localStorage.removeItem('hotel_empleado_nombre');
+    localStorage.removeItem('hotel_auth');
+    window.location.reload();
 }
