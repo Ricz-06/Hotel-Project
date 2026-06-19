@@ -1168,3 +1168,51 @@ filter:grayscale(0%);
         flex-direction:column;
     }
 }
+
+/* ===== LOGO Hotel Transilvania (lagos y volcanes) ===== */
+.hotel-logo{
+display:flex;
+align-items:center;
+gap:12px;
+text-decoration:none;
+}
+
+.hotel-logo .logo-icon{
+width:48px;
+height:48px;
+flex-shrink:0;
+filter:drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+transition:0.3s;
+}
+
+.hotel-logo:hover .logo-icon{
+transform:scale(1.05);
+}
+
+.hotel-logo .logo-text{
+display:flex;
+flex-direction:column;
+line-height:1.1;
+}
+
+.hotel-logo .logo-name{
+font-family:'Playfair Display', serif;
+color:#d4af37 !important;
+font-size:22px;
+font-weight:700;
+letter-spacing:0.5px;
+}
+
+.hotel-logo .logo-sub{
+font-family:'Poppins', sans-serif;
+color:#e8d9b5;
+font-size:11px;
+letter-spacing:1px;
+text-transform:uppercase;
+}
+
+@media(max-width:480px){
+.hotel-logo .logo-icon{ width:40px; height:40px; }
+.hotel-logo .logo-name{ font-size:18px; }
+.hotel-logo .logo-sub{ font-size:9px; }
+}

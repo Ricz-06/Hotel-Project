@@ -49,11 +49,21 @@ const crearHabitacion = async (req, res) => {
             ? servicios
             : SERVICIOS_POR_TIPO[tipoNormalizado] || SERVICIOS_POR_TIPO.Normal;
 
+        // Validación estricta para evitar 500 por mismatch de enums Prisma
+        const tiposValidos = Object.keys(SERVICIOS_POR_TIPO); // Normal, Deluxe, VIP
+        if (!tiposValidos.includes(tipoNormalizado)) {
+            return res.status(400).json({ error: `Tipo de habitación inválido: ${tipo}` });
+        }
+
+        // Estado enum Prisma: Libre / ocupada
+        // (en este controlador al crear se usa Libre con mayúscula)
+        const estadoFinal = 'Libre';
+
         const habitacion = await prisma.habitacion.create({
             data: {
-                numero:    Number(numero),
-                tipo:      tipoNormalizado, // ✅ Ahora envía "Normal" exactamente
-                estado:    'Libre',
+                numero: Number(numero),
+                tipo: tipoNormalizado,
+                estado: estadoFinal,
                 servicios: serviciosFinales
             }
         });

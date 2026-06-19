@@ -17,9 +17,65 @@
             <button id="tab-r" onclick="switchTab('register')">Registro</button>
         </div>
 
+    
         <div class="form-content">
             <form id="form-login" onsubmit="handleAuth(event, 'login')">
-                <h2>HOTEL Transilvania</h2>
+                <a class="hotel-logo hotel-logo-login" href="index.html">
+                  <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <defs>
+                      <linearGradient id="nsky2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#1a3a5c"/>
+                        <stop offset="60%" stop-color="#c0692a"/>
+                        <stop offset="100%" stop-color="#f5c97a"/>
+                      </linearGradient>
+                      <linearGradient id="nlake2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#1a5f8a"/>
+                        <stop offset="100%" stop-color="#0d3d5e"/>
+                      </linearGradient>
+                      <linearGradient id="nvolc2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#1e1e1e"/>
+                        <stop offset="100%" stop-color="#2e4a2b"/>
+                      </linearGradient>
+                      <linearGradient id="nlava2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#ff6a00"/>
+                        <stop offset="100%" stop-color="#cc3300"/>
+                      </linearGradient>
+                      <clipPath id="nc2">
+                        <circle cx="100" cy="100" r="92"/>
+                      </clipPath>
+                    </defs>
+                    <circle cx="100" cy="100" r="96" fill="#1a3a5c"/>
+                    <circle cx="100" cy="100" r="92" fill="url(#nsky2)"/>
+                    <g clip-path="url(#nc2)">
+                      <path d="M10,140 L55,85 L100,130 L145,82 L190,140 Z" fill="#2a4020" opacity="0.45"/>
+                      <path d="M20,170 L85,30 L150,170 Z" fill="url(#nvolc2)"/>
+                      <path d="M80,33 L70,75 L65,110 L62,140" stroke="url(#nlava2)" stroke-width="2" fill="none" opacity="0.75" stroke-linecap="round"/>
+                      <path d="M90,35 L98,78 L100,115" stroke="url(#nlava2)" stroke-width="1.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+                      <ellipse cx="85" cy="32" rx="10" ry="5" fill="#ff4400" opacity="0.6"/>
+                      <ellipse cx="84" cy="22" rx="9" ry="5" fill="#555" opacity="0.4"/>
+                      <ellipse cx="80" cy="13" rx="6" ry="4" fill="#666" opacity="0.28"/>
+                      <path d="M77,36 L85,30 L94,36 L90,42 L80,42 Z" fill="white" opacity="0.35"/>
+                      <path d="M130,170 L168,80 L190,170 Z" fill="url(#nvolc2)" opacity="0.7"/>
+                      <ellipse cx="168" cy="78" rx="6" ry="3" fill="#ff5500" opacity="0.5"/>
+                      <path d="M10,170 L50,148 L90,158 L130,142 L170,155 L190,145 L190,200 L10,200 Z" fill="#3a6b2e"/>
+                      <ellipse cx="155" cy="162" rx="30" ry="10" fill="url(#nlake2)" opacity="0.9"/>
+                      <path d="M130,160 Q152,155 174,160" stroke="#4aadda" stroke-width="0.8" fill="none" opacity="0.5"/>
+                      <circle cx="160" cy="38" r="8" fill="#f5e6b0" opacity="0.85"/>
+                      <circle cx="164" cy="35" r="6" fill="#c0692a" opacity="0.8"/>
+                      <circle cx="30" cy="28" r="1" fill="white" opacity="0.7"/>
+                      <circle cx="50" cy="18" r="1" fill="white" opacity="0.6"/>
+                      <circle cx="125" cy="22" r="1" fill="white" opacity="0.7"/>
+                      <path d="M110,55 Q114,51 118,55" stroke="#f5c97a" stroke-width="1" fill="none" stroke-linecap="round"/>
+                      <path d="M122,48 Q126,44 130,48" stroke="#f5c97a" stroke-width="1" fill="none" stroke-linecap="round"/>
+                    </g>
+                    <circle cx="100" cy="100" r="92" fill="none" stroke="#c9a84c" stroke-width="3"/>
+                    <circle cx="100" cy="100" r="96" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+                  </svg>
+                  <span class="logo-text">
+                    <span class="logo-name">Hotel Transilvania</span>
+                    <span class="logo-sub">Managua · Nicaragua</span>
+                  </span>
+                </a>
                 <p class="subtitle">Acceso al Panel de Control Informatizado</p>
                 <div class="input-wrapper">
                     <input type="email" id="user-l" placeholder="Correo / Usuario corporativo" required>

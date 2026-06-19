@@ -168,3 +168,44 @@ h2 {
 .btn-cancel { margin-top: 20px; background: none; border: none; color: var(--error); cursor: pointer; font-weight: 600; font-size: 0.9rem; }
 
 .hidden { display: none !important; }
+/* ===== LOGO Hotel Transilvania (lagos y volcanes) - Login ===== */
+.hotel-logo-login{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:8px;
+text-decoration:none;
+margin-bottom:6px;
+}
+
+.hotel-logo-login .logo-icon{
+width:64px;
+height:64px;
+filter:drop-shadow(0 2px 8px rgba(0,0,0,0.25));
+transition:0.3s;
+}
+
+.hotel-logo-login:hover .logo-icon{
+transform:scale(1.05);
+}
+
+.hotel-logo-login .logo-text{
+display:flex;
+flex-direction:column;
+align-items:center;
+line-height:1.2;
+}
+
+.hotel-logo-login .logo-name{
+font-size:1.8rem;
+font-weight:700;
+letter-spacing:2px;
+color:var(--gold);
+}
+
+.hotel-logo-login .logo-sub{
+font-size:0.7rem;
+letter-spacing:1.5px;
+text-transform:uppercase;
+color:var(--text-muted);
+}
